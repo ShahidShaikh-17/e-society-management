@@ -1,0 +1,60 @@
+<!-- Registration Success -->
+<%- include('partials/modern-header', { pageTitle: 'Registration Successful', hideNav: true }) %>
+
+<style>
+  .celebration { position: relative; overflow: hidden; }
+  .celebration::before {
+    content: "🎉";
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    animation: bounce 2s infinite;
+  }
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+  }
+</style>
+
+<section class="auth-shell">
+  <div class="auth-card" style="max-width: 640px;">
+    <div class="text-center celebration">
+      <div class="auth-logo-icon mb-3" style="border-radius: 999px;">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <h1 class="auth-title">Registration Successful!</h1>
+      <p class="auth-subtitle" style="font-size:16px;">Your society has been registered successfully</p>
+
+      <!-- Registration Details -->
+      <div class="text-start p-4 rounded-4 my-4" style="background:#f8fafc;border:1px solid #e2e8f0;">
+        <h4 class="h6 fw-bold mb-3"><i class="fas fa-building me-2"></i>Society Details</h4>
+        <div class="row g-3">
+          <div class="col-sm-6"><div class="text-muted small">Society Name</div><div class="fw-semibold"><%= societyName %></div></div>
+          <div class="col-sm-6"><div class="text-muted small">Administrator</div><div class="fw-semibold"><%= adminName %></div></div>
+          <div class="col-sm-6"><div class="text-muted small">Invoice Number</div><div class="fw-semibold"><%= invoiceNumber %></div></div>
+          <div class="col-sm-6"><div class="text-muted small">Transaction Date</div><div class="fw-semibold"><%= transactionDate %></div></div>
+          <div class="col-12"><div class="text-muted small">Amount Paid</div><div class="fw-bold" style="color:#198754;font-size:20px;">₹<%= amount %></div></div>
+        </div>
+      </div>
+
+      <!-- Download Receipt -->
+      <a href="<%= pdfPath %>" target="_blank" class="btn btn-primary w-100 py-2">
+        <i class="fas fa-download me-2"></i>Download Receipt (PDF)
+      </a>
+
+      <!-- Action Buttons -->
+      <div class="auth-action-row">
+        <a href="/login" class="btn btn-success w-100">
+          <i class="fas fa-sign-in-alt me-2"></i>Login to Dashboard
+        </a>
+        <a href="/" class="btn btn-outline-primary w-100">
+          <i class="fas fa-home me-2"></i>Back to Home
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

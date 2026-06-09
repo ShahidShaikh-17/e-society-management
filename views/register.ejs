@@ -1,0 +1,152 @@
+<!-- Admin Registration -->
+<%- include('partials/modern-header', { pageTitle: 'Admin Registration', hideNav: true }) %>
+
+<style>
+  .password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 16px;
+    z-index: 10;
+  }
+  .password-toggle:hover { color: #1E3A8A; }
+  .spinner {
+    display: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ffffff;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  .btn-register.loading .spinner { display: inline-block; }
+</style>
+
+<section class="auth-shell">
+  <div class="auth-card auth-card--wide">
+    <div class="text-center mb-4">
+      <div class="auth-logo-icon mb-3">
+        <i class="fas fa-building"></i>
+      </div>
+      <h1 class="auth-title">Admin Registration</h1>
+      <p class="auth-subtitle">Register your society and become the administrator</p>
+    </div>
+
+    <form action="/register-preview" method="POST" id="registerForm">
+        <!-- Personal Information -->
+        <div class="mb-4">
+          <h3 class="h6 fw-bold border-bottom pb-2 mb-3"><i class="fas fa-user me-2"></i>Personal Information</h3>
+          <div class="row g-3">
+            <div class="col-sm-6 position-relative">
+              <i class="fas fa-user auth-input-icon"></i>
+              <input type="text" name="firstName" class="form-control auth-input" id="firstName" placeholder="First Name" minlength="2" maxlength="50" pattern="[A-Za-z\s.'-]+" title="Use letters only" required>
+            </div>
+            <div class="col-sm-6 position-relative">
+              <i class="fas fa-user auth-input-icon"></i>
+              <input type="text" name="lastName" class="form-control auth-input" id="lastName" placeholder="Last Name" minlength="2" maxlength="50" pattern="[A-Za-z\s.'-]+" title="Use letters only" required>
+            </div>
+            <div class="col-sm-6 position-relative">
+              <i class="fas fa-phone auth-input-icon"></i>
+              <input type="tel" name="phoneNumber" class="form-control auth-input" id="phoneNumber" placeholder="Phone Number" pattern="(\+91[\-\s]?)?[0-9]{10}" maxlength="14" title="Enter 10-digit phone number or +91XXXXXXXXXX" required>
+            </div>
+            <div class="col-sm-6 position-relative">
+              <i class="fas fa-home auth-input-icon"></i>
+              <input type="text" name="flatNumber" class="form-control auth-input" id="flatNumber" placeholder="Flat Number" maxlength="20" pattern="[A-Za-z0-9\-\/\s]{1,20}" title="Use letters, numbers, slash or hyphen" required>
+            </div>
+          </div>
+        </div>
+
+        <!-- Society Information -->
+        <div class="mb-4">
+          <h3 class="h6 fw-bold border-bottom pb-2 mb-3"><i class="fas fa-city me-2"></i>Society Information</h3>
+          <div class="row g-3">
+            <div class="col-12 position-relative">
+              <i class="fas fa-building auth-input-icon"></i>
+              <input type="text" name="societyName" class="form-control auth-input" id="societyName" placeholder="Society Name" minlength="3" maxlength="120" required>
+            </div>
+            <div class="col-12 position-relative">
+              <i class="fas fa-map-marker-alt auth-input-icon"></i>
+              <input type="text" name="address" class="form-control auth-input" id="address" placeholder="Society Address" minlength="5" maxlength="200" required>
+            </div>
+            <div class="col-sm-6 position-relative">
+              <i class="fas fa-city auth-input-icon"></i>
+              <input type="text" name="city" class="form-control auth-input" id="city" placeholder="City" minlength="2" maxlength="60" pattern="[A-Za-z\s.'-]+" title="Use letters only" required>
+            </div>
+            <div class="col-sm-6 position-relative">
+              <i class="fas fa-map auth-input-icon"></i>
+              <input type="text" name="state" class="form-control auth-input" id="state" placeholder="State" minlength="2" maxlength="60" pattern="[A-Za-z\s.'-]+" title="Use letters only" required>
+            </div>
+            <div class="col-12 position-relative">
+              <i class="fas fa-mail-bulk auth-input-icon"></i>
+              <input type="text" name="postalCode" class="form-control auth-input" id="postalCode" placeholder="Postal Code" pattern="[0-9]{6}" maxlength="6" required>
+            </div>
+          </div>
+        </div>
+
+        <!-- Account Information -->
+        <div class="mb-3">
+          <h3 class="h6 fw-bold border-bottom pb-2 mb-3"><i class="fas fa-shield-alt me-2"></i>Account Information</h3>
+          <div class="row g-3">
+            <div class="col-12 position-relative">
+              <i class="fas fa-envelope auth-input-icon"></i>
+              <input type="email" name="username" class="form-control auth-input" id="email" placeholder="Email Address" maxlength="120" required>
+            </div>
+            <div class="col-12 position-relative">
+              <i class="fas fa-lock auth-input-icon"></i>
+              <input type="password" name="password" class="form-control auth-input" id="password" placeholder="Password" minlength="6" maxlength="128" required>
+              <button type="button" class="password-toggle" onclick="togglePassword()">
+                <i class="fas fa-eye" id="passwordIcon"></i>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100 py-2 mt-3 btn-register" id="registerBtn">
+            <i class="fas fa-building me-2"></i>Register Society
+            <span class="spinner"></span>
+          </button>
+        </div>
+      </form>
+
+      <div class="auth-action-row">
+        <a href="/login" class="btn btn-success w-100">
+          <i class="fas fa-sign-in-alt me-2"></i>Sign In
+        </a>
+        <a href="/" class="btn btn-outline-primary w-100">
+          <i class="fas fa-home me-2"></i>Home
+        </a>
+      </div>
+  </div>
+</section>
+
+<script>
+  function togglePassword() {
+    const passwordInput = document.getElementById('password');
+    const passwordIcon = document.getElementById('passwordIcon');
+
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      passwordIcon.classList.remove('fa-eye');
+      passwordIcon.classList.add('fa-eye-slash');
+    } else {
+      passwordInput.type = 'password';
+      passwordIcon.classList.remove('fa-eye-slash');
+      passwordIcon.classList.add('fa-eye');
+    }
+  }
+
+  document.getElementById('registerForm').addEventListener('submit', function() {
+    const registerBtn = document.getElementById('registerBtn');
+    registerBtn.classList.add('loading');
+    registerBtn.disabled = true;
+  });
+</script>
+
+<%- include('partials/footer') %>

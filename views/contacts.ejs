@@ -1,0 +1,240 @@
+<!-- Modern Emergency Contacts -->
+<%- include('partials/modern-header', {pageTitle: 'Emergency Contacts', pageActive: 'contacts', isAdmin: typeof isAdmin !== 'undefined' ? isAdmin : false}) %>
+
+<section class="page-header" data-aos="fade-down">
+  <div class="container">
+    <h1 class="page-title">Emergency Contacts</h1>
+    <p class="page-subtitle">Quick access to important emergency numbers</p>
+  </div>
+</section>
+
+<section class="content-section">
+  <div class="container">
+    <% if(isAdmin){ %>
+      <div class="text-center mb-4" data-aos="fade-up">
+        <a href="/editContacts" class="btn-modern btn-warning">
+          <i class="fas fa-edit me-2"></i>Edit Contact
+        </a>
+      </div>
+    <% } %>
+
+    <div class="row g-4">
+      <div class="col-lg-4 col-md-6" data-aos="flip-up">
+        <div class="modern-card text-center">
+          <div class="contact-icon mb-3" style="width: 80px; height: 80px; background: #1E3A8A; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            <i class="fas fa-wrench text-white" style="font-size: 2rem;"></i>
+          </div>
+          <h4 style="color: #2d3748; font-weight: 700; margin-bottom: 15px;">Plumbing Service</h4>
+          <p class="text-muted mb-1">For all plumbing emergencies</p>
+          <% if (contact.plumbingServiceName) { %>
+            <p class="text-muted mb-3" style="font-weight: 600;">
+              <i class="fas fa-user me-1"></i><%= contact.plumbingServiceName %>
+            </p>
+          <% } else { %>
+            <p class="text-muted mb-3">&nbsp;</p>
+          <% } %>
+          <a href="tel:<%= contact.plumbingService %>" class="btn-modern btn-info">
+            <i class="fas fa-phone me-2"></i><%= contact.plumbingService %>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6" data-aos="flip-up" data-aos-delay="100">
+        <div class="modern-card text-center">
+          <div class="contact-icon mb-3" style="width: 80px; height: 80px; background: #1E3A8A; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            <i class="fas fa-pills text-white" style="font-size: 2rem;"></i>
+          </div>
+          <h4 style="color: #2d3748; font-weight: 700; margin-bottom: 15px;">Pharmacy</h4>
+          <p class="text-muted mb-1">24/7 medicine availability</p>
+          <% if (contact.medicineShopName) { %>
+            <p class="text-muted mb-3" style="font-weight: 600;">
+              <i class="fas fa-user me-1"></i><%= contact.medicineShopName %>
+            </p>
+          <% } else { %>
+            <p class="text-muted mb-3">&nbsp;</p>
+          <% } %>
+          <a href="tel:<%= contact.medicineShop %>" class="btn-modern btn-info">
+            <i class="fas fa-phone me-2"></i><%= contact.medicineShop %>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6" data-aos="flip-up" data-aos-delay="200">
+        <div class="modern-card text-center">
+          <div class="contact-icon mb-3" style="width: 80px; height: 80px; background: #1E3A8A; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            <i class="fas fa-user-md text-white" style="font-size: 2rem;"></i>
+          </div>
+          <h4 style="color: #2d3748; font-weight: 700; margin-bottom: 15px;">Doctor</h4>
+          <p class="text-muted mb-1">Medical emergencies</p>
+          <% if (contact.doctorName) { %>
+            <p class="text-muted mb-3" style="font-weight: 600;">
+              <i class="fas fa-user me-1"></i><%= contact.doctorName %>
+            </p>
+          <% } else { %>
+            <p class="text-muted mb-3">&nbsp;</p>
+          <% } %>
+          <a href="tel:<%= contact.doctor %>" class="btn-modern btn-info">
+            <i class="fas fa-phone me-2"></i><%= contact.doctor %>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6" data-aos="flip-down">
+        <div class="modern-card text-center">
+          <div class="contact-icon mb-3" style="width: 80px; height: 80px; background: #1E3A8A; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            <i class="fas fa-ambulance text-white" style="font-size: 2rem;"></i>
+          </div>
+          <h4 style="color: #2d3748; font-weight: 700; margin-bottom: 15px;">Ambulance</h4>
+          <p class="text-muted mb-1">Emergency medical transport</p>
+          <% if (contact.ambulanceName) { %>
+            <p class="text-muted mb-3" style="font-weight: 600;">
+              <i class="fas fa-user me-1"></i><%= contact.ambulanceName %>
+            </p>
+          <% } else { %>
+            <p class="text-muted mb-3">&nbsp;</p>
+          <% } %>
+          <a href="tel:<%= contact.ambulance %>" class="btn-modern btn-info">
+            <i class="fas fa-phone me-2"></i><%= contact.ambulance %>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6" data-aos="flip-up">
+        <div class="modern-card text-center">
+          <div class="contact-icon mb-3" style="width: 80px; height: 80px; background: #1E3A8A; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            <i class="fas fa-bolt text-white" style="font-size: 2rem;"></i>
+          </div>
+          <h4 style="color: #2d3748; font-weight: 700; margin-bottom: 15px;">Electrician</h4>
+          <p class="text-muted mb-1">Electrical maintenance services</p>
+          <% if (contact.electricianName) { %>
+            <p class="text-muted mb-3" style="font-weight: 600;">
+              <i class="fas fa-user me-1"></i><%= contact.electricianName %>
+            </p>
+          <% } else { %>
+            <p class="text-muted mb-3">&nbsp;</p>
+          <% } %>
+          <a href="tel:<%= contact.electrician || '9876543210' %>" class="btn-modern btn-info">
+            <i class="fas fa-phone me-2"></i><%= contact.electrician || '9876543210' %>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6" data-aos="flip-up" data-aos-delay="50">
+        <div class="modern-card text-center">
+          <div class="contact-icon mb-3" style="width: 80px; height: 80px; background: #1E3A8A; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            <i class="fas fa-fire-extinguisher text-white" style="font-size: 2rem;"></i>
+          </div>
+          <h4 style="color: #2d3748; font-weight: 700; margin-bottom: 15px;">Fire Station</h4>
+          <p class="text-muted mb-1">Local fire department</p>
+          <% if (contact.fireStationName) { %>
+            <p class="text-muted mb-3" style="font-weight: 600;">
+              <i class="fas fa-user me-1"></i><%= contact.fireStationName %>
+            </p>
+          <% } else { %>
+            <p class="text-muted mb-3">&nbsp;</p>
+          <% } %>
+          <a href="tel:<%= contact.fireStation %>" class="btn-modern btn-info">
+            <i class="fas fa-phone me-2"></i><%= contact.fireStation %>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6" data-aos="flip-up" data-aos-delay="100">
+        <div class="modern-card text-center">
+          <div class="contact-icon mb-3" style="width: 80px; height: 80px; background: #1E3A8A; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            <i class="fas fa-shield-alt text-white" style="font-size: 2rem;"></i>
+          </div>
+          <h4 style="color: #2d3748; font-weight: 700; margin-bottom: 15px;">Police Station</h4>
+          <p class="text-muted mb-1">Law enforcement services</p>
+          <% if (contact.policeStationName) { %>
+            <p class="text-muted mb-3" style="font-weight: 600;">
+              <i class="fas fa-user me-1"></i><%= contact.policeStationName %>
+            </p>
+          <% } else { %>
+            <p class="text-muted mb-3">&nbsp;</p>
+          <% } %>
+          <a href="tel:<%= contact.policeStation %>" class="btn-modern btn-info">
+            <i class="fas fa-phone me-2"></i><%= contact.policeStation %>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6" data-aos="flip-up" data-aos-delay="200">
+        <div class="modern-card text-center">
+          <div class="contact-icon mb-3" style="width: 80px; height: 80px; background: #1E3A8A; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            <i class="fas fa-user-shield text-white" style="font-size: 2rem;"></i>
+          </div>
+          <h4 style="color: #2d3748; font-weight: 700; margin-bottom: 15px;">Guard</h4>
+          <p class="text-muted mb-1">Society security guard</p>
+          <% if (contact.guardName) { %>
+            <p class="text-muted mb-3" style="font-weight: 600;">
+              <i class="fas fa-user me-1"></i><%= contact.guardName %>
+            </p>
+          <% } else { %>
+            <p class="text-muted mb-3">&nbsp;</p>
+          <% } %>
+          <a href="tel:<%= contact.guard %>" class="btn-modern btn-info">
+            <i class="fas fa-phone me-2"></i><%= contact.guard %>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Society Committee Members Section -->
+    <div class="row mt-5" data-aos="fade-up">
+      <div class="col-12">
+        <div class="modern-card">
+          <div class="text-center mb-4">
+            <div class="contact-icon mb-3" style="width: 80px; height: 80px; background: #1E3A8A; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+              <i class="fas fa-users text-white" style="font-size: 2rem;"></i>
+            </div>
+            <h3 style="color: #2d3748; font-weight: 700;">Society Committee</h3>
+            <p class="text-muted">Contact society management for administrative issues</p>
+            <% if(isAdmin){ %>
+              <a href="/editCommittee" class="btn-modern btn-warning btn-sm mt-2">
+                <i class="fas fa-edit me-2"></i>Edit Committee
+              </a>
+            <% } %>
+          </div>
+          
+          <% if(committeeMembers && committeeMembers.length > 0) { %>
+            <div class="row">
+              <% committeeMembers.forEach((member) => { %>
+                <div class="col-md-4 col-sm-6 mb-4">
+                  <div class="text-center p-3" style="background: #f8f9fa; border-radius: 15px;">
+                    <div class="manager-avatar mb-3" style="width: 60px; height: 60px; background: #1E3A8A; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                      <i class="fas fa-user text-white" style="font-size: 1.5rem;"></i>
+                    </div>
+                    <h5 style="color: #2d3748; font-weight: 600;"><%= member.name %></h5>
+                    <p class="text-muted mb-2"><%= member.role %></p>
+                    <% if(member.phone) { %>
+                      <a href="tel:<%= member.phone %>" class="btn-modern btn-info btn-sm mb-1">
+                        <i class="fas fa-phone me-1"></i><%= member.phone %>
+                      </a>
+                    <% } %>
+                    <% if(member.email) { %>
+                      <p class="mb-0 mt-1" style="font-size: 0.85rem; color: #718096;">
+                        <i class="fas fa-envelope me-1"></i><%= member.email %>
+                      </p>
+                    <% } %>
+                    <% if(member.flatNumber) { %>
+                      <p class="mb-0" style="font-size: 0.85rem; color: #718096;">
+                        <i class="fas fa-home me-1"></i>Flat: <%= member.flatNumber %>
+                      </p>
+                    <% } %>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+          <% } else { %>
+            <div class="text-center py-4">
+              <p class="text-muted">No committee members added yet.</p>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

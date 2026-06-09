@@ -1,0 +1,137 @@
+<!-- Sign Up -->
+<%- include('partials/modern-header', { pageTitle: 'Sign Up', hideNav: true }) %>
+
+<style>
+  .password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 16px;
+    z-index: 10;
+  }
+  .password-toggle:hover { color: #1E3A8A; }
+  .spinner {
+    display: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ffffff;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  .btn-signup.loading .spinner { display: inline-block; }
+</style>
+
+<section class="auth-shell">
+  <div class="auth-card">
+    <div class="text-center mb-4">
+      <div class="auth-logo-icon mb-3">
+        <i class="fas fa-user-plus"></i>
+      </div>
+      <h1 class="auth-title">Join E-Society</h1>
+      <p class="auth-subtitle">Create your account to get started</p>
+    </div>
+
+    <form action="/signup" method="POST" id="signupForm">
+      <div class="row g-3">
+        <div class="col-sm-6 position-relative">
+          <i class="fas fa-user auth-input-icon"></i>
+          <input type="text" name="firstName" class="form-control auth-input" id="firstName" placeholder="First Name" required minlength="2" maxlength="50" pattern="[A-Za-z\s.'-]+" title="Use letters only">
+        </div>
+        <div class="col-sm-6 position-relative">
+          <i class="fas fa-user auth-input-icon"></i>
+          <input type="text" name="lastName" class="form-control auth-input" id="lastName" placeholder="Last Name" required minlength="2" maxlength="50" pattern="[A-Za-z\s.'-]+" title="Use letters only">
+        </div>
+      </div>
+
+      <div class="mt-3 position-relative">
+        <i class="fas fa-phone auth-input-icon"></i>
+        <input type="tel" name="phoneNumber" class="form-control auth-input" id="phoneNumber" placeholder="Phone Number" pattern="(\+91[\-\s]?)?[0-9]{10}" maxlength="14" title="Enter 10-digit phone number or +91XXXXXXXXXX" required>
+      </div>
+
+      <div class="mt-3 position-relative">
+        <i class="fas fa-building auth-input-icon"></i>
+        <input type="text" name="societyName" list="societyList" class="form-control auth-input" id="societyName" placeholder="Society Name" autocomplete="off" required minlength="2" maxlength="120">
+        <datalist id="societyList">
+          <% societies.forEach(society => { %>
+            <option value="<%= society.societyName %>">
+          <% }) %>
+        </datalist>
+      </div>
+
+      <div class="mt-3 position-relative">
+        <i class="fas fa-home auth-input-icon"></i>
+        <input type="text" name="flatNumber" class="form-control auth-input" id="flatNumber" placeholder="Flat Number" maxlength="20" pattern="[A-Za-z0-9\-\/\s]{1,20}" title="Use letters, numbers, slash or hyphen" required>
+      </div>
+
+      <div class="mt-3 position-relative">
+        <i class="fas fa-user-tag auth-input-icon"></i>
+        <select name="occupancyStatus" class="form-control auth-input" id="occupancyStatus" required>
+          <option value="" disabled selected>Select: Owner or Rented</option>
+          <option value="Owner">Owner</option>
+          <option value="Rented">Rented Person</option>
+        </select>
+      </div>
+
+      <div class="mt-3 position-relative">
+        <i class="fas fa-envelope auth-input-icon"></i>
+        <input type="email" name="username" class="form-control auth-input" id="email" placeholder="Email Address" maxlength="120" required>
+      </div>
+
+      <div class="mt-3 position-relative">
+        <i class="fas fa-lock auth-input-icon"></i>
+        <input type="password" name="password" class="form-control auth-input" id="password" placeholder="Password" minlength="6" maxlength="128" required>
+        <button type="button" class="password-toggle" onclick="togglePassword()">
+          <i class="fas fa-eye" id="passwordIcon"></i>
+        </button>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100 py-2 mt-3 btn-signup" id="signupBtn">
+        <i class="fas fa-user-plus me-2"></i>Create Account
+        <span class="spinner"></span>
+      </button>
+    </form>
+
+    <div class="auth-action-row">
+      <a href="/login" class="btn btn-success w-100">
+        <i class="fas fa-sign-in-alt me-2"></i>Sign In
+      </a>
+      <a href="/" class="btn btn-outline-primary w-100">
+        <i class="fas fa-home me-2"></i>Home
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+  function togglePassword() {
+    const passwordInput = document.getElementById('password');
+    const passwordIcon = document.getElementById('passwordIcon');
+
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      passwordIcon.classList.remove('fa-eye');
+      passwordIcon.classList.add('fa-eye-slash');
+    } else {
+      passwordInput.type = 'password';
+      passwordIcon.classList.remove('fa-eye-slash');
+      passwordIcon.classList.add('fa-eye');
+    }
+  }
+
+  document.getElementById('signupForm').addEventListener('submit', function() {
+    const signupBtn = document.getElementById('signupBtn');
+    signupBtn.classList.add('loading');
+    signupBtn.disabled = true;
+  });
+</script>
+
+<%- include('partials/footer') %>

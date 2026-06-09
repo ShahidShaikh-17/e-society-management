@@ -1,0 +1,476 @@
+/* Global theme + layout fixes */
+:root {
+    --es-primary: #1E3A8A;
+    --es-bg: #F8FAFC;
+    --es-text: #0f172a;
+}
+
+html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    background: var(--es-bg);
+    color: var(--es-text);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Bootstrap button alignment + consistent variants */
+.btn {
+    margin: 0;
+}
+
+.btn-primary {
+    background-color: var(--es-primary);
+    border-color: var(--es-primary);
+}
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: #17306f;
+    border-color: #17306f;
+}
+
+.btn-outline-primary {
+    color: var(--es-primary);
+    border-color: var(--es-primary);
+}
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+    background-color: var(--es-primary);
+    border-color: var(--es-primary);
+    color: #fff;
+}
+
+.btn-success {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+/* Custom lightweight button helpers used in templates */
+.btn-es-primary {
+    background: var(--es-primary);
+    border: 1px solid var(--es-primary);
+    color: #fff;
+}
+.btn-es-success {
+    background: #198754;
+    border: 1px solid #198754;
+    color: #fff;
+}
+.btn-es-outline {
+    background: transparent;
+    border: 1px solid var(--es-primary);
+    color: var(--es-primary);
+}
+.btn-es-primary:hover,
+.btn-es-success:hover,
+.btn-es-outline:hover {
+    filter: brightness(0.95);
+}
+#navlist{
+    margin-left: 5px;
+}
+#navbar{
+    padding: 0% 15% 0% 15%;
+    font-size: 18px;
+}
+/* IMPORTANT: don't force all <section> blocks tall.
+   This was the root cause of the huge empty blue header area. */
+section{
+    margin-top: 0;
+    min-height: unset;
+}
+/* Pages should control spacing using utilities */
+.banner{
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    background: url('images/night.jpg');
+    background-size: cover;
+}
+.banner::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.65);
+}
+.banner .content{
+    position: relative;
+    z-index: 1;
+}
+.banner .content{
+    max-width: 80%;
+    text-align: center;
+}
+.banner .content h1{
+    font-size: 4em;
+    margin-top: 20%;
+    font-weight: bold;
+    color: white;
+}
+.banner .content p{
+    font-weight: 600;
+    color: white;
+}
+@media (min-width: 500px) {
+    .banner .content{
+        max-width: 60%;
+    }
+}
+
+.thumbnail {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.features{
+    display: block;
+    margin: auto;
+}
+.home-container{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
+.box{
+    flex: 1;
+    margin: 15px;
+    margin-left: 5%;
+    min-width: 300px;
+}
+.box p {
+    font-size: 14px;
+}
+.box h2{
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    border-bottom: 2px solid #555;
+    position: relative;
+    margin-bottom: 15px;
+    font-size: 20px;
+}
+.box h2::before{
+    content: "";
+    width: 100px;
+    height: 100%;
+    border-bottom: 2px solid crimson;
+    position: absolute;
+    margin-top: 2px;
+}
+.box a{
+    color: #aaa;
+    text-decoration: none;
+    display: inline-block;
+}
+.box a i{
+    background: var(--es-primary);
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    margin-right: 5px;
+    transition: 0.5s linear;
+}
+.box a:hover,
+.box a:hover i{
+    color: crimson;
+    border-radius: 50%;
+}
+.subcategories a{
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+}
+.author{
+    width: 100%;
+    background: black;
+    text-align: center;
+    padding: 15px 0;
+    font-size: 1.3em;
+    text-transform: uppercase;
+    overflow: hidden;
+}
+.w3-third {
+    margin-top: 50px;
+}
+.advertisement {
+    display: flex;
+    justify-content: center;
+}
+
+@media only screen and (max-width: 600px) {
+    .banner{
+        min-height: 70vh;
+    }
+    .banner .content{
+        font-size: small;
+    }
+    button{
+        margin-left: 70px;
+    }
+    .w3-container h2{
+        font-size: 20px;     
+    }
+    .footer-head {
+        display: none;
+    }
+}
+
+span{
+    color: crimson;
+}
+
+/* Prevent long content from creating horizontal scroll */
+img, svg, video, canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Auth / public pages layout helpers (used by login/signup/register flows) */
+.auth-shell {
+    min-height: calc(100vh - 72px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 12px;
+}
+.auth-card {
+    width: 100%;
+    max-width: 520px;
+    background: #fff;
+    border-radius: 20px;
+    padding: 36px 28px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
+}
+.auth-card--wide {
+    max-width: 860px;
+}
+.auth-logo-icon {
+    width: 70px;
+    height: 70px;
+    background: var(--es-primary);
+    border-radius: 15px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.auth-logo-icon i {
+    font-size: 32px;
+    color: #fff;
+}
+.auth-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+}
+.auth-subtitle {
+    color: #64748b;
+    font-size: 14px;
+    margin: 6px 0 0 0;
+}
+.auth-input {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px 15px 12px 45px;
+    font-size: 15px;
+    height: auto;
+}
+.auth-input:focus {
+    background: #fff;
+    border-color: var(--es-primary);
+    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.12);
+}
+.auth-input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 16px;
+    pointer-events: none;
+    z-index: 5;
+}
+.auth-action-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+}
+@media (max-width: 480px) {
+    .auth-card {
+        padding: 28px 18px;
+    }
+    .auth-action-row {
+        flex-direction: column;
+    }
+}
+
+/* Legacy table theme alignment */
+.bill-content th, tfoot td {
+    background-color: var(--es-primary);
+}
+footer{
+    width: 100%;
+    background: #222;
+    color: #aaa;
+    margin-bottom: 0px;   
+}
+
+/* Residents Page */
+.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-top: 4%;
+    padding-bottom: 4%;
+    flex-direction: row;
+    background-color: rgb(233, 233, 233);
+    border-radius: 2rem;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    max-width:1000px;
+    margin: auto;
+}
+.flex-container>div {
+    border-radius: 2rem;
+    background-color: #f1f1f1;
+    align-items: center;
+    margin: 10px 25px;
+    text-align: center;
+    line-height: 20px;
+    font-size: 20px;
+    padding-top: 20px;
+}
+.list-group {
+    width: 270px;
+}
+.list-group-item {
+    font-size: 15px;
+}
+.zoom {
+    transition: transform .2s;
+}
+.zoom:hover {
+    transform: scale(1.10);
+}
+.flat-number {
+    background-color: #d9534f;
+    color: #f1f1f1;
+    font-size: 15px;
+}
+.flat-owner {
+    font-size: 15px;
+}
+.card-profile {
+    margin-top: 50px;
+    border: 0;
+    border-radius: 1rem;
+    background-color: white;
+    box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1);
+}
+.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.container-profile {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 8% 15px;
+}
+.profile-text {
+    border: black;
+    padding: 2px;
+    width: auto;
+    color: #d9534f;
+}
+
+/* Bill page */
+.bill-content, .bill-header, .bill-details {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 1000px;
+    margin: auto;
+    text-align: center;
+}
+.bill-content td, .bill-content th {
+    padding: 30px;
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+.bill-content th, tfoot td {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    background-color: crimson;
+    color: white;
+}
+tfoot td {
+    opacity: 0.8;
+    font-weight: bold;
+}
+.bill-content tr:nth-child(even){
+    background-color: #f2f2f2;
+}
+.bill-content tr:hover {
+    background-color: #ddd;
+}
+.bill-header {
+    font-size: 16px;
+}
+.bill-details td {
+    padding: 8px;
+    text-align: left;
+}
+
+/* Index Demographics */
+#stats .vertical-heading h2 {
+    color: #fff;
+}
+.stats-item {
+    background: rgba(61, 68, 68, 0.6);
+    border-radius: 4px;
+    min-height: 170px;
+    padding: 25px 50px;
+    -webkit-transition: all 400ms linear;
+    transition: all 400ms linear;
+}
+.stats-item i {
+    font-size: 42px;
+    color: #1B98E0;
+    margin: 0 0 6px 0;
+    -webkit-transition: all 400ms linear;
+    transition: all 400ms linear;
+}
+.stats-item h3 {
+    font-size: 32px;
+    color: #fff;
+    margin: 5px 0 5px 0;
+}
+.stats-item p {
+    color: #fff;
+    margin: 0;
+}
+.stats-item:hover {
+    background: #1B98E0;
+}
+.stats-item:hover i {
+    color: #212226;
+    -webkit-transform: translateY(-20px);
+    transform: translateY(-20px);
+}
+.stats-item {
+    margin-bottom: 20px;
+    padding: 25px 5px;
+}
+.stats-item i {
+    font-size: 30px;
+}
+.stats-item h3 {
+    font-size: 24px;
+}

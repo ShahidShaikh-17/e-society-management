@@ -1,0 +1,51 @@
+<%- include('partials/modern-header', { pageTitle: 'Register visitor', pageActive: 'visitorRegister', isAdmin: false }) %>
+
+<section class="page-header" data-aos="fade-down">
+  <div class="container">
+    <h1 class="page-title">Register visitor</h1>
+    <p class="page-subtitle">Photo optional (JPEG/PNG/WEBP, max 10MB). Vehicle format e.g. MH12AB1234</p>
+  </div>
+</section>
+
+<section class="content-section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="modern-card" data-aos="fade-up">
+          <form method="POST" action="/visitor-register" enctype="multipart/form-data" class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Name</label>
+              <input type="text" name="name" class="form-control" required minlength="2" maxlength="80" pattern="[A-Za-z][A-Za-z\s.'-]*" title="Name should contain letters and spaces only">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Phone</label>
+              <input type="tel" name="phone" class="form-control" required minlength="10" maxlength="10" pattern="[0-9]{10}" title="Enter 10-digit mobile number">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Flat number</label>
+              <input type="text" name="flatNumber" class="form-control" required maxlength="20" pattern="[A-Za-z0-9\-\/\s]{1,20}" title="Use letters, numbers, slash or hyphen">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Vehicle number</label>
+              <input type="text" name="vehicleNumber" class="form-control" placeholder="MH12AB1234" maxlength="12">
+            </div>
+            <div class="col-12">
+              <label class="form-label">Purpose</label>
+              <input type="text" name="purpose" class="form-control" maxlength="120">
+            </div>
+            <div class="col-12">
+              <label class="form-label">Photo</label>
+              <input type="file" name="photo" class="form-control" accept="image/jpeg,image/png,image/webp">
+            </div>
+            <div class="col-12 d-flex gap-2">
+              <button type="submit" class="btn text-white" style="background:#1E3A8A;">Save entry</button>
+              <a href="/visitor-log" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

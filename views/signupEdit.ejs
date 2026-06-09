@@ -1,0 +1,91 @@
+<!-- Modern Member Edit Form -->
+<%- include('partials/modern-header', {pageTitle: 'Edit Request', pageActive: 'home', isAdmin: typeof isAdmin !== 'undefined' ? isAdmin : false}) %>
+
+<section class="page-header" data-aos="fade-down">
+  <div class="container">
+    <h1 class="page-title">Edit Request</h1>
+    <p class="page-subtitle">Update your society registration request</p>
+  </div>
+</section>
+
+<section class="content-section">
+  <div class="container">
+    <div class="modern-card" data-aos="fade-up">
+      <div class="card-body" style="padding: 40px;">
+        <div class="text-center mb-4">
+          <div class="form-icon mb-3" style="width: 80px; height: 80px; background: #1E3A8A; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            <i class="fas fa-user-edit text-white" style="font-size: 2rem;"></i>
+          </div>
+          <h2 style="color: #2d3748; font-weight: 700;">Update Registration Request</h2>
+          <p style="color: #6c757d;">Please review and update your information</p>
+        </div>
+
+        <form class="form-edit" action="/newRequest" method="POST">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="firstName" class="form-label">
+                <i class="fas fa-user me-2"></i>First Name
+              </label>
+              <input name="firstName" type="text" id="firstName" class="form-control" value="<%= user.firstName %>" autofocus required minlength="2" maxlength="50" pattern="[A-Za-z\s.'-]+" title="Use letters only">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="lastName" class="form-label">
+                <i class="fas fa-user me-2"></i>Last Name
+              </label>
+              <input name="lastName" type="text" id="lastName" class="form-control" value="<%= user.lastName %>" required minlength="2" maxlength="50" pattern="[A-Za-z\s.'-]+" title="Use letters only">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="phoneNumber" class="form-label">
+                <i class="fas fa-phone me-2"></i>Phone Number
+              </label>
+              <input name="phoneNumber" type="tel" id="phoneNumber" class="form-control" value="<%= user.phoneNumber || user.mobileNumber || '' %>" pattern="(\+91[\-\s]?)?[0-9]{10}" maxlength="14" title="Enter 10-digit phone number or +91XXXXXXXXXX" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="societyName" class="form-label">
+                <i class="fas fa-building me-2"></i>Society Name
+              </label>
+              <input name="societyName" list="societyList" id="societyName" class="form-control" value="<%= user.societyName %>" autocomplete="off" required minlength="2" maxlength="120">
+              <datalist id="societyList">
+                <% societies.forEach(society => { %>
+                  <option value="<%= society.societyName %>">
+                <% }) %>
+              </datalist>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="flatNumber" class="form-label">
+                <i class="fas fa-door-open me-2"></i>Flat Number
+              </label>
+              <input name="flatNumber" type="text" id="flatNumber" class="form-control" value="<%= user.flatNumber %>" maxlength="20" pattern="[A-Za-z0-9\-\/\s]{1,20}" title="Use letters, numbers, slash or hyphen" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="occupancyStatus" class="form-label">
+                <i class="fas fa-user-tag me-2"></i>Owner / Rented
+              </label>
+              <select name="occupancyStatus" id="occupancyStatus" class="form-control" required>
+                <option value="Owner" <%= (user.occupancyStatus || 'Owner') === 'Owner' ? 'selected' : '' %>>Owner</option>
+                <option value="Rented" <%= user.occupancyStatus === 'Rented' ? 'selected' : '' %>>Rented Person</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="text-center mt-4">
+            <button type="submit" class="btn-modern btn-success me-3">
+              <i class="fas fa-paper-plane me-2"></i>Submit Request
+            </button>
+            <a href="/home" class="btn-modern">
+              <i class="fas fa-times me-2"></i>Cancel
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

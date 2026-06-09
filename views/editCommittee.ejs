@@ -1,0 +1,166 @@
+<!-- Modern Edit Committee Members -->
+<%- include('partials/modern-header', {pageTitle: 'Edit Committee', pageActive: 'contacts', isAdmin: typeof isAdmin !== 'undefined' ? isAdmin : false}) %>
+
+<section class="page-header" data-aos="fade-down">
+  <div class="container">
+    <h1 class="page-title">Edit Committee Members</h1>
+    <p class="page-subtitle">Manage society committee and management team</p>
+  </div>
+</section>
+
+<section class="content-section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="modern-card" data-aos="fade-up">
+          <div class="text-center mb-4">
+            <div class="form-icon mb-3" style="width: 80px; height: 80px; background: #1E3A8A; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+              <i class="fas fa-users text-white" style="font-size: 2rem;"></i>
+            </div>
+            <h3 style="color: #2d3748; font-weight: 700;">Committee Members</h3>
+            <p class="text-muted">Add or remove society committee members</p>
+          </div>
+
+          <form action="/editCommittee" method="POST" id="committee-form">
+            <div id="members-container">
+              <% if(committeeMembers && committeeMembers.length > 0) { %>
+                <% committeeMembers.forEach((member, index) => { %>
+                  <div class="member-card mb-4 p-4" style="background: #f8f9fa; border-radius: 15px; border: 2px solid #e9ecef;" data-index="<%= index %>">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <h5 style="color: #667eea; font-weight: 600;">
+                        <i class="fas fa-user me-2"></i>Member #<%= index + 1 %>
+                      </h5>
+                      <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeMember(<%= index %>)">
+                        <i class="fas fa-trash me-1"></i>Remove
+                      </button>
+                    </div>
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <label class="form-label" style="color: #4a5568; font-weight: 600;">Name</label>
+                        <input type="text" name="members[<%= index %>][name]" class="form-control" 
+                               value="<%= member.name %>" required maxlength="60" pattern="[A-Za-z\s.'-]+" title="Use letters only"
+                               style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px;">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label" style="color: #4a5568; font-weight: 600;">Role</label>
+                        <select name="members[<%= index %>][role]" class="form-select" required
+                                style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px;">
+                          <option value="Chairman" <%= member.role === 'Chairman' ? 'selected' : '' %>>Chairman</option>
+                          <option value="Secretary" <%= member.role === 'Secretary' ? 'selected' : '' %>>Secretary</option>
+                          <option value="Treasurer" <%= member.role === 'Treasurer' ? 'selected' : '' %>>Treasurer</option>
+                          <option value="Committee Member" <%= member.role === 'Committee Member' ? 'selected' : '' %>>Committee Member</option>
+                          <option value="Manager" <%= member.role === 'Manager' ? 'selected' : '' %>>Manager</option>
+                          <option value="Other" <%= member.role === 'Other' ? 'selected' : '' %>>Other</option>
+                        </select>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label" style="color: #4a5568; font-weight: 600;">Phone</label>
+                        <input type="tel" name="members[<%= index %>][phone]" class="form-control" 
+                               value="<%= member.phone || '' %>" pattern="(\+91[\-\s]?)?[0-9]{10}" maxlength="14" title="Enter 10-digit phone number or +91XXXXXXXXXX"
+                               style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px;">
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label" style="color: #4a5568; font-weight: 600;">Email</label>
+                        <input type="email" name="members[<%= index %>][email]" class="form-control" 
+                               value="<%= member.email || '' %>" maxlength="120"
+                               style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px;">
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label" style="color: #4a5568; font-weight: 600;">Flat Number</label>
+                        <input type="text" name="members[<%= index %>][flatNumber]" class="form-control" 
+                               value="<%= member.flatNumber || '' %>" maxlength="20" pattern="[A-Za-z0-9\-\/\s]{1,20}" title="Use letters, numbers, slash or hyphen"
+                               style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px;">
+                      </div>
+                    </div>
+                  </div>
+                <% }) %>
+              <% } %>
+            </div>
+
+            <button type="button" class="btn btn-modern mb-4 w-100" style="background: #198754;" onclick="addMember()">
+              <i class="fas fa-plus-circle me-2"></i>Add New Member
+            </button>
+
+            <div class="d-flex gap-3">
+              <button type="submit" class="btn-modern flex-fill">
+                <i class="fas fa-save me-2"></i>Save Changes
+              </button>
+              <a href="/contacts" class="btn-modern btn-warning flex-fill">
+                <i class="fas fa-times me-2"></i>Cancel
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+
+<script>
+let memberCount = <%= committeeMembers ? committeeMembers.length : 0 %>;
+
+function addMember() {
+  const container = document.getElementById('members-container');
+  const newCard = document.createElement('div');
+  newCard.className = 'member-card mb-4 p-4';
+  newCard.style.cssText = 'background: #f8f9fa; border-radius: 15px; border: 2px solid #e9ecef;';
+  newCard.dataset.index = memberCount;
+  
+  newCard.innerHTML = `
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 style="color: #667eea; font-weight: 600;">
+        <i class="fas fa-user me-2"></i>Member #${memberCount + 1}
+      </h5>
+      <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeMember(${memberCount})">
+        <i class="fas fa-trash me-1"></i>Remove
+      </button>
+    </div>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label" style="color: #4a5568; font-weight: 600;">Name</label>
+        <input type="text" name="members[${memberCount}][name]" class="form-control" required maxlength="60" pattern="[A-Za-z\\s.'-]+" title="Use letters only"
+               style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px;">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label" style="color: #4a5568; font-weight: 600;">Role</label>
+        <select name="members[${memberCount}][role]" class="form-select" required
+                style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px;">
+          <option value="Chairman">Chairman</option>
+          <option value="Secretary">Secretary</option>
+          <option value="Treasurer">Treasurer</option>
+          <option value="Committee Member">Committee Member</option>
+          <option value="Manager">Manager</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label" style="color: #4a5568; font-weight: 600;">Phone</label>
+        <input type="tel" name="members[${memberCount}][phone]" class="form-control" pattern="(\\+91[\\-\\s]?)?[0-9]{10}" maxlength="14" title="Enter 10-digit phone number or +91XXXXXXXXXX"
+               style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px;">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label" style="color: #4a5568; font-weight: 600;">Email</label>
+        <input type="email" name="members[${memberCount}][email]" class="form-control" maxlength="120"
+               style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px;">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label" style="color: #4a5568; font-weight: 600;">Flat Number</label>
+        <input type="text" name="members[${memberCount}][flatNumber]" class="form-control" maxlength="20" pattern="[A-Za-z0-9\\-\\/\\s]{1,20}" title="Use letters, numbers, slash or hyphen"
+               style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px;">
+      </div>
+    </div>
+  `;
+  
+  container.appendChild(newCard);
+  memberCount++;
+}
+
+function removeMember(index) {
+  const card = document.querySelector(`.member-card[data-index="${index}"]`);
+  if (card) {
+    card.remove();
+  }
+}
+</script>

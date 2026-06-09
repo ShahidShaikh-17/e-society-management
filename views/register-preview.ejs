@@ -1,0 +1,113 @@
+<!-- Registration Preview and Payment -->
+<%- include('partials/modern-header', { pageTitle: 'Registration Payment', hideNav: true }) %>
+
+<section class="auth-shell">
+  <div class="auth-card auth-card--wide">
+    <!-- Registration Details -->
+    <div class="mb-4">
+      <div class="text-center mb-4">
+        <div class="auth-logo-icon mb-3">
+          <i class="fas fa-file-alt"></i>
+        </div>
+        <h1 class="auth-title">Review Your Details</h1>
+        <p class="auth-subtitle">Please review your society registration details before proceeding to payment</p>
+      </div>
+
+      <!-- Personal Information -->
+      <div class="p-4 rounded-4 mb-3" style="background:#f8fafc;border:1px solid #e2e8f0;">
+        <h3 class="h6 fw-bold mb-3"><i class="fas fa-user me-2"></i>Personal Information</h3>
+        <div class="row g-3">
+          <div class="col-sm-6"><div class="text-muted small">First Name</div><div class="fw-semibold"><%= registrationData.firstName %></div></div>
+          <div class="col-sm-6"><div class="text-muted small">Last Name</div><div class="fw-semibold"><%= registrationData.lastName %></div></div>
+          <div class="col-sm-6"><div class="text-muted small">Phone Number</div><div class="fw-semibold"><%= registrationData.phoneNumber %></div></div>
+          <div class="col-sm-6"><div class="text-muted small">Flat Number</div><div class="fw-semibold"><%= registrationData.flatNumber %></div></div>
+        </div>
+      </div>
+
+      <!-- Society Information -->
+      <div class="p-4 rounded-4" style="background:#f8fafc;border:1px solid #e2e8f0;">
+        <h3 class="h6 fw-bold mb-3"><i class="fas fa-city me-2"></i>Society Information</h3>
+        <div class="row g-3">
+          <div class="col-sm-6"><div class="text-muted small">Society Name</div><div class="fw-semibold"><%= registrationData.societyName %></div></div>
+          <div class="col-sm-6"><div class="text-muted small">City</div><div class="fw-semibold"><%= registrationData.city %></div></div>
+          <div class="col-12"><div class="text-muted small">Address</div><div class="fw-semibold"><%= registrationData.address %></div></div>
+          <div class="col-sm-6"><div class="text-muted small">State</div><div class="fw-semibold"><%= registrationData.state %></div></div>
+          <div class="col-sm-6"><div class="text-muted small">Postal Code</div><div class="fw-semibold"><%= registrationData.postalCode %></div></div>
+          <div class="col-12"><div class="text-muted small">Email</div><div class="fw-semibold" style="word-break:break-all;"><%= registrationData.username %></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment Section -->
+    <div class="p-4 rounded-4 text-white mb-3" style="background:#198754;">
+      <h3 class="h5 fw-bold mb-2">Society Registration Fee</h3>
+      <div class="display-6 fw-bold">₹<%= registrationFee %></div>
+      <div style="opacity:0.9;">One-time registration fee for your society</div>
+
+      <form action="/create-registration-checkout" method="POST" id="paymentForm">
+        <button type="submit" class="btn btn-primary w-100 py-2 mt-3" id="payBtn">
+          <i class="fas fa-credit-card me-2"></i>Pay Now & Register Society
+        </button>
+      </form>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="d-flex gap-2 flex-wrap">
+      <a href="/register" class="btn btn-outline-primary">
+        <i class="fas fa-edit me-2"></i>Edit Details
+      </a>
+
+      <!-- Stripe Elements -->
+      <script src="https://js.stripe.com/v3/"></script>
+      <script>
+        const stripeKey = '<%= stripePublishableKey %>';
+        const stripe = stripeKey ? Stripe(stripeKey) : null;
+        
+        document.getElementById('paymentForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          const button = document.getElementById('payBtn');
+          button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+          button.disabled = true;
+          
+          try {
+            if (!stripe) {
+              throw new Error('Stripe publishable key is not configured. Please contact support.');
+            }
+
+            const response = await fetch('/create-registration-checkout', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+
+            const payload = await response.json();
+            if (!response.ok) {
+              throw new Error(payload.error || 'Unable to start payment session.');
+            }
+            if (!payload.id) {
+              throw new Error('Unable to create Stripe checkout session.');
+            }
+
+            // Redirect to Stripe Checkout
+            const result = await stripe.redirectToCheckout({ sessionId: payload.id });
+            
+            if (result.error) {
+              alert(result.error.message);
+              button.innerHTML = '<i class="fas fa-credit-card me-2"></i>Pay Now & Register Society';
+              button.disabled = false;
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+            button.innerHTML = '<i class="fas fa-credit-card me-2"></i>Pay Now & Register Society';
+            button.disabled = false;
+          }
+        });
+      </script>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

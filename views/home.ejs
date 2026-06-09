@@ -1,0 +1,143 @@
+<!-- Modern Home page -->
+<%- include('partials/modern-header', {pageTitle: 'Home', pageActive: 'home', isAdmin: isAdmin}) %>
+
+<section class="page-header" data-aos="fade-down">
+  <div class="container">
+    <h1 class="page-title">Welcome to E-Society</h1>
+    <p class="page-subtitle">Your complete society management solution</p>
+  </div>
+</section>
+
+<section class="content-section">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="section-title" data-aos="fade-up">Quick Access</h2>
+      <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Manage your society with ease</p>
+    </div>
+    
+    <div class="row g-4 mb-5">
+      <% if(typeof isAdmin !== 'undefined' && isAdmin) { %>
+      <div class="col-md-6 col-lg-4" data-aos="flip-up">
+        <a href="/residents" class="modern-card text-decoration-none d-block">
+          <div class="text-center p-4">
+            <div class="complaint-icon mb-3">
+              <i class="fas fa-users text-white" style="font-size: 2rem;"></i>
+            </div>
+            <h3>Residents</h3>
+            <p class="text-muted">View and manage resident information and contact details</p>
+          </div>
+        </a>
+      </div>
+      <% } %>
+      
+      <div class="col-md-6 col-lg-4" data-aos="flip-up" data-aos-delay="100">
+        <a href="/noticeboard" class="modern-card text-decoration-none d-block">
+          <div class="text-center p-4">
+            <div class="complaint-icon mb-3" style="background: #1E3A8A;">
+              <i class="fas fa-bullhorn text-white" style="font-size: 2rem;"></i>
+            </div>
+            <h3>Noticeboard</h3>
+            <p class="text-muted">Stay updated with latest announcements and notices</p>
+          </div>
+        </a>
+      </div>
+      
+      <% if (typeof userRole === 'undefined' || userRole !== 'guard') { %>
+      <div class="col-md-6 col-lg-4" data-aos="flip-up" data-aos-delay="200">
+        <a href="/bill" class="modern-card text-decoration-none d-block">
+          <div class="text-center p-4">
+            <div class="complaint-icon mb-3" style="background: #1E3A8A;">
+              <i class="fas fa-file-invoice-dollar text-white" style="font-size: 2rem;"></i>
+            </div>
+            <h3>Bills</h3>
+            <p class="text-muted">View and pay your society bills online securely</p>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-md-6 col-lg-4" data-aos="flip-down" data-aos-delay="100">
+        <a href="/payment-history" class="modern-card text-decoration-none d-block">
+          <div class="text-center p-4">
+            <div class="complaint-icon mb-3" style="background: #1E3A8A;">
+              <i class="fas fa-history me-1 text-white" style="font-size: 2rem;"></i>
+            </div>
+            <h3>Payment History</h3>
+            <p class="text-muted">Track your monthly bill payments and download receipts</p>
+          </div>
+        </a>
+      </div>
+      <% } %>
+
+      <% if (typeof userRole !== 'undefined' && userRole === 'guard') { %>
+      <div class="col-md-6 col-lg-4" data-aos="flip-up" data-aos-delay="200">
+        <a href="/visitor-register" class="modern-card text-decoration-none d-block">
+          <div class="text-center p-4">
+            <div class="complaint-icon mb-3" style="background: #1E3A8A;">
+              <i class="fas fa-user-plus text-white" style="font-size: 2rem;"></i>
+            </div>
+            <h3>Add Visitor</h3>
+            <p class="text-muted">Register visitor entry with photo and vehicle details</p>
+          </div>
+        </a>
+      </div>
+      <div class="col-md-6 col-lg-4" data-aos="flip-up" data-aos-delay="300">
+        <a href="/visitor-log" class="modern-card text-decoration-none d-block">
+          <div class="text-center p-4">
+            <div class="complaint-icon mb-3" style="background: #1E3A8A;">
+              <i class="fas fa-door-open text-white" style="font-size: 2rem;"></i>
+            </div>
+            <h3>Visitor Log</h3>
+            <p class="text-muted">View current and past visitors and mark exits</p>
+          </div>
+        </a>
+      </div>
+      <% } %>
+      
+      <div class="col-md-6 col-lg-4" data-aos="flip-down">
+        <a href="/helpdesk" class="modern-card text-decoration-none d-block">
+          <div class="text-center p-4">
+            <div class="complaint-icon mb-3">
+              <i class="fas fa-hands-helping text-white" style="font-size: 2rem;"></i>
+            </div>
+            <h3>Helpdesk</h3>
+            <p class="text-muted">Submit and track maintenance requests efficiently</p>
+          </div>
+        </a>
+      </div>
+      
+      <div class="col-md-6 col-lg-4" data-aos="flip-down" data-aos-delay="100">
+        <a href="/contacts" class="modern-card text-decoration-none d-block">
+          <div class="text-center p-4">
+            <div class="complaint-icon mb-3" style="background: #1E3A8A;">
+              <i class="fas fa-phone text-white" style="font-size: 2rem;"></i>
+            </div>
+            <h3>Emergency Contacts</h3>
+            <p class="text-muted">Quick access to important emergency numbers</p>
+          </div>
+        </a>
+      </div>
+      
+      <div class="col-md-6 col-lg-4" data-aos="flip-down" data-aos-delay="200">
+        <a href="/profile" class="modern-card text-decoration-none d-block">
+          <div class="text-center p-4">
+            <div class="complaint-icon mb-3" style="background: #1E3A8A;">
+              <i class="fas fa-user-circle text-white" style="font-size: 2rem;"></i>
+            </div>
+            <h3>Profile</h3>
+            <p class="text-muted">Manage your personal information and settings</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+
+<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 800,
+    once: true
+  });
+</script>

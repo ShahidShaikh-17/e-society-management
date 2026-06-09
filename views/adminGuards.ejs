@@ -1,0 +1,94 @@
+<%- include('partials/modern-header', {pageTitle: 'Guards', pageActive: 'guards', isAdmin: true}) %>
+
+<section class="page-header" data-aos="fade-down">
+  <div class="container">
+    <h1 class="page-title">Guards</h1>
+    <p class="page-subtitle">Create and manage guard accounts (admin only)</p>
+  </div>
+</section>
+
+<section class="content-section">
+  <div class="container">
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="alert alert-danger"><%= error %></div>
+    <% } %>
+    <% if (typeof success !== 'undefined' && success) { %>
+      <div class="alert alert-success"><%= success %></div>
+    <% } %>
+
+    <div class="row g-4">
+      <div class="col-lg-5">
+        <div class="modern-card" data-aos="fade-up">
+          <h4 class="mb-3" style="font-weight:800; color:#0f172a;">Add Guard</h4>
+          <form method="POST" action="/admin/create-guard">
+            <div class="mb-3">
+              <label class="form-label fw-bold">Name</label>
+              <input class="form-control" name="name" placeholder="e.g. Rahul Sharma" required maxlength="100">
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Email</label>
+              <input class="form-control" type="email" name="email" placeholder="guard@example.com" required maxlength="120">
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Password</label>
+              <input class="form-control" type="password" name="password" placeholder="Min 6 chars" required minlength="6" maxlength="128">
+            </div>
+            <button class="btn-modern" type="submit">
+              <i class="fas fa-user-shield me-2"></i>Create Guard
+            </button>
+          </form>
+          <p class="text-muted mt-3 mb-0" style="font-size:0.9rem;">
+            Guards are <strong>admin-created only</strong> and cannot self-signup.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-lg-7">
+        <div class="modern-card" data-aos="fade-up" data-aos-delay="100">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h4 class="mb-0" style="font-weight:800; color:#0f172a;">Guard List</h4>
+            <span class="badge bg-secondary"><%= guards.length %> guards</span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead style="background:#f8f9fa;">
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% guards.forEach(g => { %>
+                  <tr>
+                    <td><strong><%= g.firstName %> <%= g.lastName %></strong></td>
+                    <td><%= g.username %></td>
+                    <td><%= g.createdAt ? new Date(g.createdAt).toLocaleDateString() : '-' %></td>
+                    <td>
+                      <form method="POST" action="/admin/delete-guard" class="d-inline" onsubmit="return confirm('Delete this guard account?');">
+                        <input type="hidden" name="userId" value="<%= g._id %>">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                          <i class="fas fa-trash me-1"></i>Delete
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                <% }) %>
+                <% if (!guards.length) { %>
+                  <tr>
+                    <td colspan="4" class="text-center text-muted py-4">No guards created yet.</td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+

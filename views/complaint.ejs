@@ -1,0 +1,96 @@
+<!-- Modern Raise Complaint -->
+<%- include('partials/modern-header', {pageTitle: 'Raise Complaint', pageActive: 'helpdesk', isAdmin: typeof isAdmin !== 'undefined' ? isAdmin : false}) %>
+
+<section class="page-header" data-aos="fade-down">
+  <div class="container">
+    <h1 class="page-title">Raise Complaint</h1>
+    <p class="page-subtitle">Submit maintenance requests and track their resolution</p>
+  </div>
+</section>
+
+<section class="content-section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-6">
+        <div class="modern-card" data-aos="fade-up">
+          <div class="text-center mb-4">
+            <div class="form-icon mb-3" style="width: 80px; height: 80px; background: #1E3A8A; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+              <i class="fas fa-tools text-white" style="font-size: 2rem;"></i>
+            </div>
+            <h3 style="color: #2d3748; font-weight: 700;">New Complaint</h3>
+            <p class="text-muted">Fill in the details to raise a maintenance request</p>
+          </div>
+
+          <form action="/complaint" method="POST" enctype="multipart/form-data">
+            <div class="form-group mb-4">
+              <label for="category" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                <i class="fas fa-list me-2"></i>Category
+              </label>
+              <select name="category" class="form-control" id="category" required
+                      style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; transition: all 0.3s ease;">
+                <option value="">Select category</option>
+                <option value="Plumbing">Plumbing</option>
+                <option value="Electrical">Electrical</option>
+                <option value="Carpentry">Carpentry</option>
+                <option value="Cleaning">Cleaning</option>
+                <option value="Security">Security</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group mb-4">
+              <label style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                <i class="fas fa-tag me-2"></i>Type
+              </label>
+              <div class="d-flex gap-4">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="type" id="Personal" value="Personal" required>
+                  <label class="form-check-label" for="Personal">
+                    <i class="fas fa-user me-2"></i>Personal
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="type" id="Community" value="Community" required>
+                  <label class="form-check-label" for="Community">
+                    <i class="fas fa-users me-2"></i>Community
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group mb-4">
+              <label for="description" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                <i class="fas fa-align-left me-2"></i>Description
+              </label>
+              <textarea name="description" class="form-control" id="description" rows="14" required
+                        minlength="10" maxlength="3000"
+                        style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; transition: all 0.3s ease; resize: vertical;"
+                        placeholder="Describe the issue in detail (minimum 10 characters)"></textarea>
+            </div>
+
+            <div class="form-group mb-4">
+              <label for="attachments" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                <i class="fas fa-camera me-2"></i>Attachments (Optional)
+              </label>
+              <input type="file" name="attachments" id="attachments" class="form-control" 
+                     multiple accept="image/*"
+                     style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px;">
+              <small class="text-muted">You can upload up to 5 images (JPG, PNG, GIF, WEBP). Max size: 10MB per image.</small>
+            </div>
+
+            <div class="d-flex gap-3">
+              <button type="submit" class="btn-modern flex-fill">
+                <i class="fas fa-paper-plane me-2"></i>Submit Complaint
+              </button>
+              <a href="/helpdesk" class="btn-modern btn-warning flex-fill">
+                <i class="fas fa-times me-2"></i>Cancel
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

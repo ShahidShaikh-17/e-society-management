@@ -1,0 +1,214 @@
+<!-- Modern Edit Bill -->
+<%- include('partials/modern-header', {pageTitle: 'Edit Bill', pageActive: 'bill', isAdmin: typeof isAdmin !== 'undefined' ? isAdmin : false}) %>
+
+<section class="page-header" data-aos="fade-down">
+  <div class="container">
+    <h1 class="page-title">Edit Maintenance Bill</h1>
+    <p class="page-subtitle">Update society maintenance charges and billing information</p>
+  </div>
+</section>
+
+<section class="content-section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="modern-card" data-aos="fade-up">
+          <div class="text-center mb-4">
+            <div class="form-icon mb-3" style="width: 80px; height: 80px; background: #1E3A8A; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+              <i class="fas fa-file-invoice-dollar text-white" style="font-size: 2rem;"></i>
+            </div>
+            <h3 style="color: #2d3748; font-weight: 700;">Maintenance Bill Settings</h3>
+            <p class="text-muted">Configure monthly maintenance charges and additional fees</p>
+          </div>
+
+          <form action="/editBill" method="POST">
+            <div class="row g-4">
+              <!-- Basic Charges -->
+              <div class="col-12">
+                <h4 class="mb-3" style="color: #2d3748; font-weight: 600;">
+                  <i class="fas fa-home me-2"></i>Basic Maintenance Charges
+                </h4>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="societyCharges" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                    <i class="fas fa-building me-2"></i>Society Charges
+                  </label>
+                  <input name="societyCharges" type="number" id="societyCharges" class="form-control" 
+                         value="<%= maintenanceBill.societyCharges %>" required autofocus min="0"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; transition: all 0.3s ease;"
+                         placeholder="Enter amount">
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="repairsAndMaintenance" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                    <i class="fas fa-tools me-2"></i>Repairs & Maintenance
+                  </label>
+                  <input name="repairsAndMaintenance" type="number" id="repairsAndMaintenance" class="form-control" 
+                         value="<%= maintenanceBill.repairsAndMaintenance %>" required min="0"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; transition: all 0.3s ease;"
+                         placeholder="Enter amount">
+                </div>
+              </div>
+
+              <!-- Utility Charges -->
+              <div class="col-12 mt-4">
+                <h4 class="mb-3" style="color: #2d3748; font-weight: 600;">
+                  <i class="fas fa-bolt me-2"></i>Utility Charges
+                </h4>
+              </div>
+
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="waterCharges" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                    <i class="fas fa-tint me-2"></i>Water Charges
+                  </label>
+                  <input name="waterCharges" type="number" id="waterCharges" class="form-control" 
+                         value="<%= maintenanceBill.waterCharges %>" required min="0"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; transition: all 0.3s ease;"
+                         placeholder="Enter amount">
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="electricityCharges" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                    <i class="fas fa-lightbulb me-2"></i>Electricity Charges
+                  </label>
+                  <input name="electricityCharges" type="number" id="electricityCharges" class="form-control" 
+                         value="<%= maintenanceBill.electricityCharges || 0 %>" min="0"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; transition: all 0.3s ease;"
+                         placeholder="Enter amount">
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="gasCharges" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                    <i class="fas fa-fire me-2"></i>Gas Charges
+                  </label>
+                  <input name="gasCharges" type="number" id="gasCharges" class="form-control" 
+                         value="<%= maintenanceBill.gasCharges || 0 %>" min="0"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; transition: all 0.3s ease;"
+                         placeholder="Enter amount">
+                </div>
+              </div>
+
+              <!-- Additional Charges -->
+              <div class="col-12 mt-4">
+                <h4 class="mb-3" style="color: #2d3748; font-weight: 600;">
+                  <i class="fas fa-plus-circle me-2"></i>Additional Charges
+                </h4>
+              </div>
+
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="sinkingFund" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                    <i class="fas fa-piggy-bank me-2"></i>Sinking Fund
+                  </label>
+                  <input name="sinkingFund" type="number" id="sinkingFund" class="form-control" 
+                         value="<%= maintenanceBill.sinkingFund %>" required min="0"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; transition: all 0.3s ease;"
+                         placeholder="Enter amount">
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="insuranceCharges" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                    <i class="fas fa-shield-alt me-2"></i>Insurance Charges
+                  </label>
+                  <input name="insuranceCharges" type="number" id="insuranceCharges" class="form-control" 
+                         value="<%= maintenanceBill.insuranceCharges %>" required min="0"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; transition: all 0.3s ease;"
+                         placeholder="Enter amount">
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="parkingCharges" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                    <i class="fas fa-car me-2"></i>Parking Charges
+                  </label>
+                  <input name="parkingCharges" type="number" id="parkingCharges" class="form-control" 
+                         value="<%= maintenanceBill.parkingCharges %>" required min="0"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; transition: all 0.3s ease;"
+                         placeholder="Enter amount">
+                </div>
+              </div>
+
+              <!-- Optional Charges -->
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="liftCharges" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                    <i class="fas fa-elevator me-2"></i>Lift Charges
+                  </label>
+                  <input name="liftCharges" type="number" id="liftCharges" class="form-control" 
+                         value="<%= maintenanceBill.liftCharges || 0 %>" min="0"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; transition: all 0.3s ease;"
+                         placeholder="Enter amount">
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="otherCharges" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                    <i class="fas fa-ellipsis-h me-2"></i>Other Charges
+                  </label>
+                  <input name="otherCharges" type="number" id="otherCharges" class="form-control" 
+                         value="<%= maintenanceBill.otherCharges || 0 %>" min="0"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; transition: all 0.3s ease;"
+                         placeholder="Enter amount">
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 p-3" style="background: #f8f9fa; border-radius: 15px; border-left: 5px solid #1E3A8A;">
+              <h5 class="mb-2" style="color: #2d3748; font-weight: 600;">
+                <i class="fas fa-calculator me-2"></i>Total Monthly Bill
+              </h5>
+              <p class="mb-0" style="font-size: 1.5rem; font-weight: 800; color: #28a745;">
+                ₹<span id="totalDisplay">0.00</span>
+              </p>
+            </div>
+
+            <div class="d-flex gap-3 mt-4">
+              <button type="submit" class="btn-modern flex-fill">
+                <i class="fas fa-save me-2"></i>Save Changes
+              </button>
+              <a href="/bill" class="btn-modern btn-warning flex-fill">
+                <i class="fas fa-times me-2"></i>Cancel
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const inputs = document.querySelectorAll('input[type="number"]');
+  const totalDisplay = document.getElementById('totalDisplay');
+
+  function calculateTotal() {
+    let total = 0;
+    inputs.forEach(input => {
+      total += parseFloat(input.value) || 0;
+    });
+    totalDisplay.textContent = total.toFixed(2);
+  }
+
+  inputs.forEach(input => {
+    input.addEventListener('input', calculateTotal);
+  });
+
+  calculateTotal(); // initial calculation
+});
+</script>

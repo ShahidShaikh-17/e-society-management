@@ -1,0 +1,97 @@
+<!-- Modern Edit Profile -->
+<%- include('partials/modern-header', {pageTitle: 'Edit Profile', pageActive: 'profile', isAdmin: typeof isAdmin !== 'undefined' ? isAdmin : false}) %>
+
+<section class="page-header" data-aos="fade-down">
+  <div class="container">
+    <h1 class="page-title">Edit Profile</h1>
+    <p class="page-subtitle">Update your personal information and settings</p>
+  </div>
+</section>
+
+<section class="content-section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-6">
+        <div class="modern-card" data-aos="fade-up">
+          <div class="text-center mb-4">
+            <div class="form-icon mb-3" style="width: 80px; height: 80px; background: #1E3A8A; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+              <i class="fas fa-user-edit text-white" style="font-size: 2rem;"></i>
+            </div>
+            <h3 style="color: #2d3748; font-weight: 700;">Edit Profile</h3>
+            <p class="text-muted">Update your personal information</p>
+          </div>
+
+          <form action="/editProfile" method="POST">
+            <div class="form-group mb-4">
+              <label for="inputFirstName" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                <i class="fas fa-user me-2"></i>First Name
+              </label>
+              <input name="firstName" type="text" id="inputFirstName" class="form-control" 
+                     value="<%= resident.firstName %>" required autofocus minlength="2" maxlength="50" pattern="[A-Za-z\s.'-]+" title="Use letters only"
+                     style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; transition: all 0.3s ease;">
+            </div>
+
+            <div class="form-group mb-4">
+              <label for="inputLastName" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                <i class="fas fa-user me-2"></i>Last Name
+              </label>
+              <input name="lastName" type="text" id="inputLastName" class="form-control" 
+                     value="<%= resident.lastName %>" required minlength="2" maxlength="50" pattern="[A-Za-z\s.'-]+" title="Use letters only"
+                     style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; transition: all 0.3s ease;">
+            </div>
+
+            <div class="form-group mb-4">
+              <label for="inputPhoneNumber" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                <i class="fas fa-phone me-2"></i>Phone Number
+              </label>
+              <input name="phoneNumber" type="text" id="inputPhoneNumber" class="form-control" 
+                     value="<%= resident.phoneNumber || resident.mobileNumber || '' %>" required
+                     pattern="(\+91[\-\s]?)?[0-9]{10}" maxlength="14" title="Enter 10-digit phone number or +91XXXXXXXXXX"
+                     style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; transition: all 0.3s ease;">
+            </div>
+
+            <div class="form-group mb-4">
+              <label for="inputFlatNumber" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                <i class="fas fa-home me-2"></i>Flat Number
+              </label>
+              <input name="flatNumber" type="text" id="inputFlatNumber" class="form-control" 
+                     value="<%= resident.flatNumber %>" required
+                     maxlength="20" pattern="[A-Za-z0-9\-\/\s]{1,20}" title="Use letters, numbers, slash or hyphen"
+                     style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; transition: all 0.3s ease;">
+            </div>
+
+            <div class="form-group mb-4">
+              <label for="inputOccupancyStatus" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                <i class="fas fa-user-tag me-2"></i>Owner / Rented
+              </label>
+              <select name="occupancyStatus" id="inputOccupancyStatus" class="form-control" required
+                      style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; transition: all 0.3s ease;">
+                <option value="Owner" <%= (resident.occupancyStatus || 'Owner') === 'Owner' ? 'selected' : '' %>>Owner</option>
+                <option value="Rented" <%= resident.occupancyStatus === 'Rented' ? 'selected' : '' %>>Rented Person</option>
+              </select>
+            </div>
+
+            <div class="form-group mb-4">
+              <label style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                <i class="fas fa-envelope me-2"></i>Email (Read-only)
+              </label>
+              <input type="email" class="form-control" value="<%= resident.username %>" readonly
+                     style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; background: #f8f9fa;">
+            </div>
+
+            <div class="d-flex gap-3">
+              <button type="submit" class="btn-modern flex-fill">
+                <i class="fas fa-save me-2"></i>Save Changes
+              </button>
+              <a href="/profile" class="btn-modern btn-warning flex-fill">
+                <i class="fas fa-times me-2"></i>Cancel
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,89 @@
+<%- include('partials/modern-header', { pageTitle: 'Monthly billing' , pageActive: 'monthlyConfig' , isAdmin: true }) %>
+
+  <section class="page-header" data-aos="fade-down">
+    <div class="container">
+      <h1 class="page-title">Monthly billing configuration</h1>
+      <p class="page-subtitle">Set default maintenance amount per month (YYYY-MM). Locked months cannot be edited.</p>
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="container">
+      <div class="modern-card mb-4" data-aos="fade-up">
+        <h4 class="mb-3" style="color: #1E3A8A;">Set or update month</h4>
+        <p class="text-muted small">Suggested from society bill breakdown: ₹<%= typeof suggestedDefault !=='undefined' ?
+            suggestedDefault : 0 %>
+        </p>
+        <form method="POST" action="/admin/monthly-config" class="row g-3 align-items-end">
+          <div class="col-md-4">
+            <label class="form-label fw-bold">Month (YYYY-MM)</label>
+            <input type="text" name="month" class="form-control" placeholder="2026-04" pattern="\d{4}-\d{2}" required>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-bold">Default amount (₹)</label>
+            <input type="number" name="defaultAmount" class="form-control" min="0" step="0.01"
+              value="<%= typeof suggestedDefault !== 'undefined' ? suggestedDefault : 0 %>" required>
+          </div>
+          <div class="col-md-4">
+            <button type="submit" class="btn w-100 text-white" style="background:#1E3A8A;">Save</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="modern-card" data-aos="fade-up">
+        <h4 class="mb-3" style="color: #1E3A8A;">Recent configs</h4>
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Month</th>
+                <th>Default ₹</th>
+                <th>Locked</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% const currentMonth=new Date().toISOString().slice(0,7); %>
+
+                <% (configs || []).forEach(c=> { %>
+                  <tr>
+                    <td>
+                      <%= c.month %>
+                    </td>
+                    <td>₹<%= c.defaultAmount %>
+                    </td>
+                    <td>
+                      <%= c.isLocked ? 'Yes' : 'No' %>
+                    </td>
+
+                    <td>
+                      <% if (!c.isLocked && c.month> currentMonth) { %>
+                        <form method="POST" action="/admin/monthly-config/delete/<%= c._id %>"
+                          onsubmit="return confirm('Are you sure you want to delete this config?');">
+                          <button type="submit" class="btn btn-sm btn-danger">
+                            Delete
+                          </button>
+                        </form>
+                        <% } else { %>
+                          <span class="text-muted">Not allowed</span>
+                          <% } %>
+                    </td>
+                  </tr>
+                  <% }) %>
+
+                    <% if (!(configs || []).length) { %>
+                      <tr>
+                        <td colspan="4" class="text-muted">
+                          No configs yet — they are also created when residents open the bill page.
+                        </td>
+                      </tr>
+                      <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%- include('partials/footer') %>

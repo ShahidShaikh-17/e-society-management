@@ -1,0 +1,70 @@
+<%- include('partials/modern-header', { pageTitle: 'Visitor log', pageActive: 'visitorLog', isAdmin: typeof isAdmin !== 'undefined' ? isAdmin : false }) %>
+
+<section class="page-header" data-aos="fade-down">
+  <div class="container">
+    <h1 class="page-title">Visitor log</h1>
+    <p class="page-subtitle"><%= readOnly ? 'Read-only directory' : 'Entry and exit tracking' %></p>
+  </div>
+</section>
+
+<section class="content-section">
+  <div class="container">
+    <% if (typeof userRole !== 'undefined' && userRole === 'guard') { %>
+      <div class="mb-3">
+        <a href="/visitor-register" class="btn text-white" style="background:#1E3A8A;"><i class="fas fa-user-plus me-2"></i>Register visitor</a>
+      </div>
+    <% } %>
+
+    <div class="modern-card" data-aos="fade-up">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Flat</th>
+              <th>Vehicle</th>
+              <th>Purpose</th>
+              <th>Entry</th>
+              <th>Expected exit</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% (visitors || []).forEach(v => { %>
+              <tr class="<%= v.overstayed ? 'table-warning' : '' %>">
+                <td><%= v.name %></td>
+                <td><%= v.phone %></td>
+                <td><%= v.flatNumber %></td>
+                <td><%= v.vehicleNumber || '-' %></td>
+                <td><%= v.purpose || '-' %></td>
+                <td><%= v.entryTime ? new Date(v.entryTime).toLocaleString() : '-' %></td>
+                <td><%= v.expectedExitTime ? new Date(v.expectedExitTime).toLocaleString() : '-' %></td>
+                <td>
+                  <%= v.status %>
+                  <% if (v.overstayed) { %><span class="badge bg-danger ms-1">Overstayed</span><% } %>
+                </td>
+                <td>
+                  <% if (v.status === 'IN' && !readOnly && (typeof userRole !== 'undefined' && (userRole === 'guard' || userRole === 'admin'))) { %>
+                    <form method="POST" action="/visitor-exit/<%= v._id %>" class="d-inline" onsubmit="return confirm('Mark visitor exit?');">
+                      <button type="submit" class="btn btn-sm btn-outline-success">Exit</button>
+                    </form>
+                  <% } %>
+                  <% if (v.photoUrl) { %>
+                    <a href="<%= v.photoUrl %>" target="_blank" class="btn btn-sm btn-outline-secondary ms-1">Photo</a>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+            <% if (!(visitors || []).length) { %>
+              <tr><td colspan="9" class="text-muted text-center py-4">No visitors recorded.</td></tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

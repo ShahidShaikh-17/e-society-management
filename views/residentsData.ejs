@@ -1,0 +1,613 @@
+<!-- Modern Residents Data (Admin Only) -->
+<%- include('partials/modern-header', {pageTitle: 'Residents Data', pageActive: 'residentsData', isAdmin: isAdmin}) %>
+
+<section class="page-header" data-aos="fade-down">
+  <div class="container">
+    <h1 class="page-title">Residents Data</h1>
+    <p class="page-subtitle">Manage and view all society residents information</p>
+  </div>
+</section>
+
+<section class="content-section">
+  <div class="container">
+    <!-- Summary Cards -->
+    <div class="row mb-4 g-3">
+      <div class="col-12 col-md-6 col-lg-3" data-aos="fade-up">
+        <div class="modern-card text-center" style="background: #eaf2ff;">
+          <div class="summary-icon mb-3" style="width: 60px; height: 60px; background: #1E3A8A; border-radius: 15px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            <i class="fas fa-users text-white" style="font-size: 1.5rem;"></i>
+          </div>
+          <h4 style="color: #004085; font-weight: 700;">Total Residents</h4>
+          <p style="font-size: 2rem; font-weight: 800; color: #004085; margin-bottom: 0;"><%= totalResidents %></p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
+        <div class="modern-card text-center" style="background: #e8f5e9;">
+          <div class="summary-icon mb-3" style="width: 60px; height: 60px; background: #198754; border-radius: 15px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            <i class="fas fa-check-circle text-white" style="font-size: 1.5rem;"></i>
+          </div>
+          <h4 style="color: #155724; font-weight: 700;">Approved</h4>
+          <p style="font-size: 2rem; font-weight: 800; color: #155724; margin-bottom: 0;"><%= approvedResidents %></p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
+        <div class="modern-card text-center" style="background: #fff5f5;">
+          <div class="summary-icon mb-3" style="width: 60px; height: 60px; background: #dc3545; border-radius: 15px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            <i class="fas fa-exclamation-triangle text-white" style="font-size: 1.5rem;"></i>
+          </div>
+          <h4 style="color: #721c24; font-weight: 700;">Overdue Bills</h4>
+          <p style="font-size: 2rem; font-weight: 800; color: #721c24; margin-bottom: 0;"><%= overdueBills %></p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
+        <div class="modern-card text-center" style="background: #fff8e1;">
+          <div class="summary-icon mb-3" style="width: 60px; height: 60px; background: #f59e0b; border-radius: 15px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            <i class="fas fa-rupee-sign text-white" style="font-size: 1.5rem;"></i>
+          </div>
+          <h4 style="color: #856404; font-weight: 700;">Total Pending Amount</h4>
+          <%
+            let totalPending = residents
+              .filter(r => r.validation === 'approved' && r.isBillingApplicable)
+              .reduce((sum, r) => sum + ((r.currentDue || 0) > 0 ? (r.currentDue || 0) : 0), 0);
+          %>
+          <p style="font-size: 2rem; font-weight: 800; color: #856404; margin-bottom: 0;">₹<%= totalPending %></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="modern-card mb-4" data-aos="fade-up" data-aos-delay="400">
+      <div class="card-body">
+        <div class="row align-items-end">
+          <div class="col-md-4">
+            <label class="form-label fw-bold">
+              <i class="fas fa-search me-2"></i>Search Residents
+            </label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="fas fa-search"></i>
+              </span>
+              <input type="text" class="form-control" id="searchInput" placeholder="Search by name, flat, or email...">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label fw-bold">
+              <i class="fas fa-filter me-2"></i>Status
+            </label>
+            <select class="form-select" id="statusFilter">
+              <option value="">All Status</option>
+              <option value="approved">Approved</option>
+              <option value="unknown">Unknown</option>
+              <option value="declined">Declined</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label fw-bold">
+              <i class="fas fa-credit-card me-2"></i>Payment
+            </label>
+            <select class="form-select" id="paymentFilter">
+              <option value="">All Payment Status</option>
+              <option value="paid">Paid</option>
+              <option value="unpaid">Unpaid</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-bold">
+              <i class="fas fa-download me-2"></i>Export Data
+            </label>
+            <div class="btn-group w-100" role="group">
+              <button class="btn btn-success" onclick="exportResidents('excel')">
+                <i class="fas fa-file-excel me-2"></i>Export Excel
+              </button>
+              <button class="btn btn-primary" onclick="exportResidents('csv')">
+                <i class="fas fa-file-csv me-2"></i>Export CSV
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Residents Table -->
+    <div class="modern-card" data-aos="fade-up" data-aos-delay="500">
+      <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+        <div class="fw-bold" style="color:#2d3748;">Bulk Actions</div>
+        <div class="btn-group" role="group">
+          <button class="btn btn-sm btn-outline-success" onclick="bulkApprove()">
+            <i class="fas fa-check"></i> Approve Selected
+          </button>
+          <button class="btn btn-sm btn-outline-danger" onclick="bulkReject()">
+            <i class="fas fa-times"></i> Reject Selected
+          </button>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover" id="residentsTable">
+          <thead style="background: #f8f9fa;">
+            <tr>
+              <th style="width:40px;"><input type="checkbox" id="selectAll" /></th>
+              <th><i class="fas fa-user me-2"></i>Name</th>
+              <th><i class="fas fa-home me-2"></i>Flat</th>
+              <th><i class="fas fa-user-tag me-2"></i>For</th>
+              <th><i class="fas fa-envelope me-2"></i>Email</th>
+              <th><i class="fas fa-phone me-2"></i>Mobile</th>
+              <th><i class="fas fa-info-circle me-2"></i>Status</th>
+              <th><i class="fas fa-rupee-sign me-2"></i>Current Bill</th>
+              <th><i class="fas fa-credit-card me-2"></i>Payment</th>
+              <th><i class="fas fa-cog me-2"></i>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% residents.forEach((resident, index) => { %>
+              <tr data-status="<%= (resident.validation === 'approved' || resident.validation === 'applied' || resident.validation === 'declined') ? resident.validation : 'unknown' %>" data-payment="<%= (!resident.isBillingApplicable || resident.validation !== 'approved') ? '' : (((resident.currentDue || 0) > 0) ? 'unpaid' : 'paid') %>">
+                <td>
+                  <input type="checkbox" class="rowSelect" value="<%= resident._id %>" />
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="user-avatar me-3" style="width: 40px; height: 40px; background: #1E3A8A; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                      <%= ((resident.firstName || '').charAt(0) || 'U') + ((resident.lastName || '').charAt(0) || '') %>
+                    </div>
+                    <div>
+                      <strong><%= (resident.firstName || '') %> <%= (resident.lastName || '') %></strong>
+                      <% if(resident.isAdmin) { %>
+                        <span class="badge bg-warning text-dark ms-2">Admin</span>
+                      <% } %>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <span class="badge bg-info text-dark">
+                    <i class="fas fa-door-open me-1"></i><%= resident.flatNumber %>
+                  </span>
+                </td>
+                <td>
+                  <% if ((resident.role || '') === 'guard') { %>
+                    Guard
+                  <% } else { %>
+                    <%= resident.occupancyStatus || 'Owner' %>
+                  <% } %>
+                </td>
+                <td><%= resident.email || resident.username || '-' %></td>
+                <td><%= resident.phoneNumber || resident.mobileNumber || '-' %></td>
+                <td>
+                  <% if(resident.validation === 'approved') { %>
+                    <span class="status-badge status-success">
+                      <i class="fas fa-check-circle me-1"></i>Approved
+                    </span>
+                  <% } else if(resident.validation === 'applied') { %>
+                    <span class="status-badge status-warning">
+                      <i class="fas fa-clock me-1"></i>Pending
+                    </span>
+                  <% } else if(resident.validation === 'declined') { %>
+                    <span class="status-badge status-danger">
+                      <i class="fas fa-times-circle me-1"></i>Declined
+                    </span>
+                  <% } else { %>
+                    <span class="status-badge status-secondary">
+                      <i class="fas fa-question-circle me-1"></i>Unknown
+                    </span>
+                  <% } %>
+                </td>
+                <td>
+                  <% if(!resident.isBillingApplicable) { %>
+                    <span class="text-muted">N/A</span>
+                  <% } else if(resident.validation === 'approved') { %>
+                    <strong style="color: #2d3748;">₹<%= resident.currentDue || 0 %></strong>
+                  <% } else { %>
+                    <span class="text-muted">-</span>
+                  <% } %>
+                </td>
+                <td>
+                  <% if(!resident.isBillingApplicable) { %>
+                    <span class="text-muted">N/A</span>
+                  <% } else if(resident.validation !== 'approved') { %>
+                    <span class="text-muted">-</span>
+                  <% } else if((resident.currentDue || 0) > 0) { %>
+                    <span class="status-badge status-warning">
+                      <i class="fas fa-clock me-1"></i>Unpaid
+                    </span>
+                  <% } else { %>
+                    <span class="status-badge status-success">
+                      <i class="fas fa-check-circle me-1"></i>Paid
+                    </span>
+                  <% } %>
+                </td>
+                <td>
+                  <div class="btn-group" role="group">
+                    <% if(resident.isBillingApplicable) { %>
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewPaymentHistory('<%= resident._id %>')">
+                      <i class="fas fa-history"></i> History
+                    </button>
+                    <% } else { %>
+                    <button class="btn btn-sm btn-outline-secondary" disabled title="Billing not applicable for guard users">
+                      <i class="fas fa-ban"></i> N/A
+                    </button>
+                    <% } %>
+                    <% if(resident.isBillingApplicable && resident.validation === 'approved' && (resident.currentDue || 0) > 0 && typeof currentMonthKey !== 'undefined') { %>
+                    <form method="POST" action="/admin/billing/cash-payment" class="d-inline-flex align-items-center gap-1 ms-1" onsubmit="return confirm('Record cash payment for this resident?');">
+                      <input type="hidden" name="userId" value="<%= resident._id %>">
+                      <input type="hidden" name="monthKey" value="<%= currentMonthKey %>">
+                      <input type="number" name="amount" step="0.01" min="0.01" max="<%= resident.currentDue %>" value="<%= resident.currentDue %>" required class="form-control form-control-sm" style="width:90px" title="Amount">
+                      <button type="submit" class="btn btn-sm btn-outline-secondary">Cash</button>
+                    </form>
+                    <% } %>
+                    <% if(resident.validation === 'applied') { %>
+                      <button class="btn btn-sm btn-outline-success" onclick="approveResident('<%= resident._id %>')">
+                        <i class="fas fa-check"></i> Approve
+                      </button>
+                      <button class="btn btn-sm btn-outline-danger" onclick="rejectResident('<%= resident._id %>')">
+                        <i class="fas fa-times"></i> Reject
+                      </button>
+                    <% } %>
+                    <% if(!resident.isAdmin && typeof currentUser !== 'undefined' && resident._id.toString() !== currentUser._id.toString()) { %>
+                      <button class="btn btn-sm btn-outline-danger js-delete-resident" data-user-id="<%= resident._id %>" data-user-name="<%= (resident.firstName || '') + ' ' + (resident.lastName || '') %>">
+                        <i class="fas fa-trash"></i> Delete
+                      </button>
+                    <% } %>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Payment History Modal -->
+<div class="modal fade" id="paymentHistoryModal" tabindex="-1" aria-labelledby="paymentHistoryModalLabel">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="paymentHistoryModalLabel">Payment History</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closePaymentHistoryModal"></button>
+      </div>
+      <div class="modal-body" id="paymentHistoryContent">
+        <!-- Payment history will be loaded here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>
+
+<script>
+// Unified filtering function
+function filterRows() {
+  const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+  const status = document.getElementById('statusFilter').value;
+  const payment = document.getElementById('paymentFilter').value;
+  const rows = document.querySelectorAll('#residentsTable tbody tr');
+  
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    const rowStatus = (row.dataset.status || 'unknown').toLowerCase();
+    const rowPayment = row.dataset.payment;
+    
+    const matchesSearch = text.includes(searchTerm);
+    const matchesStatus = status === '' || rowStatus === status.toLowerCase();
+    const matchesPayment = payment === '' || rowPayment === payment;
+    
+    row.style.display = (matchesSearch && matchesStatus && matchesPayment) ? '' : 'none';
+  });
+}
+
+function rejectResident(userId) {
+  if(confirm('Are you sure you want to reject this resident?')) {
+    fetch('/rejectResident', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ userId: userId })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if(data.success) {
+        alert('Resident rejected successfully.');
+        location.reload();
+      } else {
+        alert('Failed to reject resident: ' + data.message);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Failed to reject resident. Please try again.');
+    });
+  }
+}
+
+function getSelectedUserIds() {
+  return Array.from(document.querySelectorAll('.rowSelect:checked')).map(cb => cb.value);
+}
+
+function bulkApprove() {
+  const userIds = getSelectedUserIds();
+  if(!userIds.length) {
+    alert('Select at least one resident.');
+    return;
+  }
+  if(confirm(`Approve ${userIds.length} resident(s)?`)) {
+    fetch('/approveResident', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userIds })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if(data.success) {
+        location.reload();
+      } else {
+        alert('Failed: ' + data.message);
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      alert('Failed to approve residents.');
+    });
+  }
+}
+
+function bulkReject() {
+  const userIds = getSelectedUserIds();
+  if(!userIds.length) {
+    alert('Select at least one resident.');
+    return;
+  }
+  if(confirm(`Reject ${userIds.length} resident(s)?`)) {
+    fetch('/rejectResident', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userIds })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if(data.success) {
+        location.reload();
+      } else {
+        alert('Failed: ' + data.message);
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      alert('Failed to reject residents.');
+    });
+  }
+}
+
+// Event listeners for filters
+document.getElementById('searchInput').addEventListener('input', filterRows);
+document.getElementById('statusFilter').addEventListener('change', filterRows);
+document.getElementById('paymentFilter').addEventListener('change', filterRows);
+
+// Select all
+document.getElementById('selectAll').addEventListener('change', function() {
+  const checked = this.checked;
+  document.querySelectorAll('.rowSelect').forEach(cb => cb.checked = checked);
+});
+
+// Delegated handler to avoid EJS inside inline JS (improves linting and safety)
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('.js-delete-resident');
+  if (!btn) return;
+  const userId = btn.getAttribute('data-user-id');
+  const userName = btn.getAttribute('data-user-name') || 'this resident';
+  deleteResident(userId, userName);
+});
+
+function approveResident(userId) {
+  if(confirm('Are you sure you want to approve this resident?')) {
+    fetch('/approveResident', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ userId: userId })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if(data.success) {
+        alert('Resident approved successfully.');
+        location.reload();
+      } else {
+        alert('Failed to approve resident: ' + data.message);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Failed to approve resident. Please try again.');
+    });
+  }
+}
+
+function viewPaymentHistory(userId) {
+  const modalEl = document.getElementById('paymentHistoryModal');
+  const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+  document.getElementById('paymentHistoryContent').innerHTML = `
+    <div class="text-center py-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2">Loading payment history...</p>
+    </div>
+  `;
+  modal.show();
+  
+  // Handle focus issue when modal closes
+  modalEl.addEventListener('hidden.bs.modal', function() {
+    document.activeElement.blur();
+  }, { once: true });
+  
+  fetch(`/resident-payment-history/${userId}`)
+    .then(response => response.json())
+    .then(data => {
+      if(data.success) {
+        displayPaymentHistory(data.history, data.residentName);
+      } else {
+        document.getElementById('paymentHistoryContent').innerHTML = `
+          <div class="alert alert-danger">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            ${data.message}
+          </div>
+        `;
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      document.getElementById('paymentHistoryContent').innerHTML = `
+        <div class="alert alert-danger">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          Failed to load payment history. Please try again.
+        </div>
+      `;
+    });
+}
+
+function displayPaymentHistory(history, residentName) {
+  if (!history || history.length === 0) {
+    document.getElementById('paymentHistoryContent').innerHTML = `
+      <div class="text-center py-4">
+        <i class="fas fa-history fa-3x text-muted mb-3"></i>
+        <h5>No Payment History</h5>
+        <p class="text-muted">This resident has no payment history yet.</p>
+      </div>
+    `;
+    return;
+  }
+  
+  const historyHtml = `
+    <h5 class="mb-3">Payment History for ${residentName}</h5>
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead style="background: #f8f9fa;">
+          <tr>
+            <th>Month</th>
+            <th>Invoice</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${history.map(payment => `
+            <tr>
+              <td>${payment.month || '-'} ${payment.year || '-'}</td>
+              <td>${payment.invoice || '-'}</td>
+              <td>₹${payment.amount || 0}</td>
+              <td>
+                ${payment.status === 'paid' ? 
+                  '<span class="badge bg-success">Paid</span>' : 
+                  '<span class="badge bg-warning">Pending</span>'
+                }
+              </td>
+              <td>${payment.date ? new Date(payment.date).toLocaleDateString() : '-'}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+  
+  document.getElementById('paymentHistoryContent').innerHTML = historyHtml;
+}
+
+function sendReminder(userId) {
+  if(confirm('Are you sure you want to send a payment reminder to this resident?')) {
+    fetch('/send-payment-reminder', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ userId: userId })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if(data.success) {
+        alert('Payment reminder sent successfully!');
+      } else {
+        alert('Failed to send reminder: ' + data.message);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Failed to send reminder. Please try again.');
+    });
+  }
+}
+
+function deleteResident(userId, userName) {
+  if(confirm(`Are you sure you want to delete ${userName}? This action cannot be undone.`)) {
+    fetch('/delete-resident', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ userId: userId })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if(data.success) {
+        alert(`${userName} has been deleted successfully.`);
+        location.reload(); // Reload the page to update the list
+      } else {
+        alert('Failed to delete resident: ' + data.message);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Failed to delete resident. Please try again.');
+    });
+  }
+}
+
+function exportResidents(format) {
+  const status = document.getElementById('statusFilter').value;
+  const payment = document.getElementById('paymentFilter').value;
+  const search = document.getElementById('searchInput').value;
+  
+  const params = new URLSearchParams({
+    format: format,
+    status: status,
+    payment: payment,
+    search: search
+  });
+  
+  window.location.href = `/export-residents?${params.toString()}`;
+}
+</script>
+
+<style>
+.status-badge {
+  padding: 0.375rem 0.75rem;
+  border-radius: 50px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  border: none;
+}
+
+.status-success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-warning {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.status-secondary {
+  background-color: #e2e3e5;
+  color: #383d41;
+}
+</style>
+</body>
+</html>

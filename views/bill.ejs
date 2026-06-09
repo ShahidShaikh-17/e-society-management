@@ -1,0 +1,644 @@
+<%- include('partials/modern-header', {pageTitle: 'Bill', pageActive: 'bill', isAdmin: resident.isAdmin}) %>
+
+
+<section class="page-header" data-aos="fade-down">
+  <div class="container">
+    <h1 class="page-title">Bill</h1>
+    <p class="page-subtitle">View and pay your society bills online securely</p>
+  </div>
+</section>
+
+<section class="content-section">
+  <div class="container">
+    <% if (typeof stripeEnabled !== 'undefined' && !stripeEnabled && totalAmount > 0) { %>
+      <div class="alert alert-warning">
+        Online payment is temporarily unavailable because Stripe is not configured. Please contact admin.
+      </div>
+    <% } %>
+    <!-- Payment Status Badge -->
+    <div class="text-center mb-4" data-aos="fade-up">
+      <% if(totalAmount == 0) { %>
+        <div class="payment-status-badge mb-3">
+          <i class="fas fa-check-circle me-2"></i>Payment Status: PAID
+        </div>
+      <% } else { %>
+        <div class="payment-status-badge payment-status-pending mb-3">
+          <i class="fas fa-clock me-2"></i>Payment Status: PENDING
+        </div>
+      <% } %>
+    </div>
+
+    <div class="text-center mb-4" data-aos="fade-up">
+      <% if (typeof useNewBilling !== 'undefined' && useNewBilling) { %>
+        <% if(totalAmount > 0) { %>
+          <button id="download-btn" type="button" class="btn-modern btn-info me-2">
+            <i class="fas fa-download me-2"></i>Download Bill
+          </button>
+          <button id="pay-online-btn" type="button" class="btn-modern btn-success me-2" <%= (typeof stripeEnabled !== 'undefined' && stripeEnabled) ? '' : 'disabled' %>>
+            <i class="fas fa-credit-card me-2"></i>Pay Online (Stripe)
+          </button>
+        <% } %>
+        <% if(receipt && receipt.invoice) { %>
+          <button id="download-receipt" type="button" class="btn-modern btn-success me-2">
+            <i class="fas fa-receipt me-2"></i>Download Receipt
+          </button>
+        <% } %>
+        <% if(resident.isAdmin){ %>
+          <a href="/admin/monthly-config" class="btn-modern btn-info ms-2">
+            <i class="fas fa-calendar-alt me-2"></i>Monthly billing config
+          </a>
+          <a href="/editBill" class="btn-modern ms-2">
+            <i class="fas fa-edit me-2"></i>Edit Society Bill
+          </a>
+          <a href="/billOverrides" class="btn-modern btn-warning ms-2">
+            <i class="fas fa-user-edit me-2"></i>Override User Bills
+          </a>
+        <% } %>
+      <% } %>
+    </div>
+
+    <div class="modern-card" data-aos="fade-up">
+      <div id="print-content">
+        <% 
+          let viewBill = (currentOverride && currentOverride.billDetails) ? currentOverride.billDetails : society.maintenanceBill;
+        %>
+        <% if (typeof useNewBilling !== 'undefined' && useNewBilling && typeof residentBill !== 'undefined' && residentBill) { %>
+        <div class="alert alert-light border mb-4 text-start">
+          <p class="mb-1"><strong>Bill month (system):</strong> <%= typeof monthKey !== 'undefined' ? monthKey : '' %></p>
+          <p class="mb-1"><strong>Monthly charge:</strong> ₹<%= residentBill.amount %></p>
+          <p class="mb-1"><strong>Total paid:</strong> ₹<%= residentBill.totalPaid %></p>
+          <p class="mb-1"><strong>Outstanding:</strong> ₹<%= residentBill.dueAmount %></p>
+          <p class="mb-0"><strong>Status:</strong> <%= residentBill.status %><% if (residentBill.override) { %> (override)<% } %></p>
+        </div>
+        <% } %>
+        <!-- Bill Header -->
+        <div class="bill-header text-center mb-4" style="background: #1E3A8A; color: white; padding: 30px; border-radius: 20px 20px 0 0;">
+          <h2 style="font-weight: 800; margin-bottom: 10px;"><%= society.societyName %></h2>
+          <p style="margin-bottom: 0;">
+            <%= society.societyAddress.address %>, <%= society.societyAddress.city %>, 
+            <%= society.societyAddress.district %>-<%= society.societyAddress.postalCode %>
+          </p>
+        </div>
+
+        <!-- Payment Summary Card -->
+        <div class="payment-summary p-4 mb-4" style="background: #f8f9fa; border-radius: 15px; border-left: 5px solid #1E3A8A;" data-aos="fade-up" data-aos-delay="100">
+          <div class="row text-center">
+            <div class="col-md-4">
+              <div class="summary-item">
+                <h6 style="color: #6c757d; font-size: 0.9rem; margin-bottom: 5px;">BILL PERIOD</h6>
+                <p style="font-size: 1.1rem; font-weight: 700; color: #2d3748; margin-bottom: 0;">
+                  <%= monthName %> <%= year %>
+                </p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="summary-item">
+                <h6 style="color: #6c757d; font-size: 0.9rem; margin-bottom: 5px;">TOTAL AMOUNT</h6>
+                <p style="font-size: 1.3rem; font-weight: 800; color: #1E3A8A; margin-bottom: 0;">
+                  ₹<%= totalAmount %>
+                </p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="summary-item">
+                <h6 style="color: #6c757d; font-size: 0.9rem; margin-bottom: 5px;">PAYMENT STATUS</h6>
+                <% if(totalAmount == 0) { %>
+                  <p style="font-size: 1rem; font-weight: 700; color: #28a745; margin-bottom: 0;">
+                    <i class="fas fa-check-circle me-1"></i>PAID
+                  </p>
+                <% } else { %>
+                  <p style="font-size: 1rem; font-weight: 700; color: #ffc107; margin-bottom: 0;">
+                    <i class="fas fa-clock me-1"></i>PENDING
+                  </p>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resident Information -->
+        <div class="row mb-4" data-aos="fade-up" data-aos-delay="200">
+          <div class="col-md-6">
+            <div class="card h-100" style="border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.08);">
+              <div class="card-body">
+                <h5 class="card-title" style="color: #2d3748; font-weight: 700;">
+                  <i class="fas fa-user me-2"></i>Resident Information
+                </h5>
+                <p class="mb-2"><strong>Name:</strong> <%= resident.firstName %> <%= resident.lastName %></p>
+                <p class="mb-2"><strong>Flat:</strong> <%= resident.flatNumber %></p>
+                <p class="mb-0"><strong>Mobile:</strong> <%= resident.phoneNumber || resident.mobileNumber || 'Not provided' %></p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card h-100" style="border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.08);">
+              <div class="card-body">
+                <h5 class="card-title" style="color: #2d3748; font-weight: 700;">
+                  <i class="fas fa-file-invoice me-2"></i>Bill Details
+                </h5>
+                <p class="mb-2"><strong>Bill Month:</strong> <%= monthName %> <%= year %></p>
+                <% if(receipt.invoice) { %>
+                  <p class="mb-2"><strong>Receipt #:</strong> <%= receipt.invoice %></p>
+                  <p class="mb-0"><strong>Paid Date:</strong> <%= new Date(receipt.date).toLocaleDateString() %></p>
+                <% } else { %>
+                  <p class="mb-0"><strong>Status:</strong> <span class="badge bg-warning">Pending</span></p>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bill Breakdown Table -->
+        <div class="table-responsive" data-aos="fade-up" data-aos-delay="300">
+          <table class="table table-modern">
+            <thead>
+              <tr>
+                <th style="width: 60%;">Particulars</th>
+                <th class="text-right">Amount (₹)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Society Charges</td>
+                <td class="text-right"><%= viewBill.societyCharges || 0 %></td>
+              </tr>
+              <tr>
+                <td>Repairs & Maintenance</td>
+                <td class="text-right"><%= viewBill.repairsAndMaintenance || 0 %></td>
+              </tr>
+              <tr>
+                <td>Sinking Fund</td>
+                <td class="text-right"><%= viewBill.sinkingFund || 0 %></td>
+              </tr>
+              <tr>
+                <td>Water Charges</td>
+                <td class="text-right"><%= viewBill.waterCharges || 0 %></td>
+              </tr>
+              <tr>
+                <td>Insurance Charges</td>
+                <td class="text-right"><%= viewBill.insuranceCharges || 0 %></td>
+              </tr>
+              <tr>
+                <td>Parking Charges</td>
+                <td class="text-right"><%= viewBill.parkingCharges || 0 %></td>
+              </tr>
+              <tr>
+                <td>Electricity Charges</td>
+                <td class="text-right"><%= viewBill.electricityCharges || 0 %></td>
+              </tr>
+              <tr>
+                <td>Gas Charges</td>
+                <td class="text-right"><%= viewBill.gasCharges || 0 %></td>
+              </tr>
+              <tr>
+                <td>Lift Charges</td>
+                <td class="text-right"><%= viewBill.liftCharges || 0 %></td>
+              </tr>
+              <% if(viewBill.otherCharges > 0) { %>
+              <tr>
+                <td>Other Charges</td>
+                <td class="text-right"><%= viewBill.otherCharges || 0 %></td>
+              </tr>
+              <% } %>
+              
+              <% if(pendingDue > 0) { %>
+              <tr>
+                <td><strong>Pending Dues (Previous Months)</strong></td>
+                <td class="text-right"><strong>₹<%= pendingDue %></strong></td>
+              </tr>
+              <% } %>
+              
+              <% if(totalAmount == 0 && creditBalance > 0) { %>
+              <tr>
+                <td><strong>Amount Paid</strong></td>
+                <td class="text-right"><strong>₹<%= creditBalance %></strong></td>
+              </tr>
+              <% } %>
+              
+              <% // Show message if everything is paid and no dues %>
+              <% if(totalAmount == 0 && creditBalance == 0 && pendingDue == 0) { %>
+              <tr>
+                <td colspan="2" class="text-center py-3" style="background: #d4edda; color: #155724; font-weight: 600;">
+                  <i class="fas fa-check-circle me-2"></i>All payments are up to date!
+                </td>
+              </tr>
+              <% } %>
+            </tbody>
+            <tfoot>
+              <tr class="total-row">
+                <td><strong>Total Amount</strong></td>
+                <td class="text-right"><strong>₹<%= totalAmount %></strong></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        
+        <!-- Amount in Words -->
+        <div class="mt-4 p-3" style="background: #f8f9fa; border-radius: 10px;">
+          <p class="mb-0"><strong>Amount in Words:</strong> 
+            <span id="words">Loading...</span>
+          </p>
+          <input type="hidden" id="number" value="<%= totalAmount == 0 ? creditBalance : totalAmount %>">
+        </div>
+        
+        <!-- Footer -->
+        <div class="mt-4 text-center text-muted">
+          <small>This is a computer-generated bill. No signature required.</small><br>
+          <% if(receipt.invoice) { %>
+            <small>Payment confirmed via Transaction ID: <%= receipt.invoice %></small>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hidden Receipt for PDF Generation -->
+    <% if(receipt.invoice) { %>
+    <div id="receipt" style="display: none;">
+      <%
+        const receiptBill = receipt.billDetails || viewBill;
+      %>
+      <!-- Receipt Header -->
+      <div class="bill-header text-center mb-4" style="background: #198754; color: white; padding: 30px; border-radius: 20px 20px 0 0;">
+        <h2 style="font-weight: 800; margin-bottom: 10px;"><%= society.societyName %></h2>
+        <p style="margin-bottom: 0;">
+          <%= society.societyAddress.address %>, <%= society.societyAddress.city %>,
+          <%= society.societyAddress.district %>-<%= society.societyAddress.postalCode %>
+        </p>
+        <h3 style="margin-top: 20px; font-weight: 700;">PAYMENT RECEIPT</h3>
+      </div>
+
+      <!-- Receipt Details -->
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <div class="card h-100" style="border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.08);">
+            <div class="card-body">
+              <h5 class="card-title" style="color: #2d3748; font-weight: 700;">
+                <i class="fas fa-user me-2"></i>Resident Information
+              </h5>
+              <p class="mb-2"><strong>Name:</strong> <%= resident.firstName %> <%= resident.lastName %></p>
+              <p class="mb-2"><strong>Flat:</strong> <%= resident.flatNumber %></p>
+              <p class="mb-0"><strong>Mobile:</strong> <%= resident.phoneNumber || resident.mobileNumber || 'Not provided' %></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card h-100" style="border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.08);">
+            <div class="card-body">
+              <h5 class="card-title" style="color: #2d3748; font-weight: 700;">
+                <i class="fas fa-receipt me-2"></i>Receipt Details
+              </h5>
+              <p class="mb-2"><strong>Receipt #:</strong> <%= receipt.invoice %></p>
+              <p class="mb-2"><strong>Bill Period:</strong> <%= receipt.month %> <%= receipt.year %></p>
+              <p class="mb-2"><strong>Payment Date:</strong> <%= new Date(receipt.date).toLocaleDateString() %></p>
+              <p class="mb-0"><strong>Amount Paid:</strong> ₹<%= receipt.amount %></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Breakdown Table -->
+      <div class="table-responsive mb-4">
+        <table class="table table-modern">
+          <thead>
+            <tr>
+              <th style="width: 60%;">Particulars</th>
+              <th class="text-right">Amount (₹)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Society Charges</td>
+              <td class="text-right"><%= receiptBill.societyCharges || 0 %></td>
+            </tr>
+            <tr>
+              <td>Repairs & Maintenance</td>
+              <td class="text-right"><%= receiptBill.repairsAndMaintenance || 0 %></td>
+            </tr>
+            <tr>
+              <td>Sinking Fund</td>
+              <td class="text-right"><%= receiptBill.sinkingFund || 0 %></td>
+            </tr>
+            <tr>
+              <td>Water Charges</td>
+              <td class="text-right"><%= receiptBill.waterCharges || 0 %></td>
+            </tr>
+            <tr>
+              <td>Insurance Charges</td>
+              <td class="text-right"><%= receiptBill.insuranceCharges || 0 %></td>
+            </tr>
+            <tr>
+              <td>Parking Charges</td>
+              <td class="text-right"><%= receiptBill.parkingCharges || 0 %></td>
+            </tr>
+            <tr>
+              <td>Electricity Charges</td>
+              <td class="text-right"><%= receiptBill.electricityCharges || 0 %></td>
+            </tr>
+            <tr>
+              <td>Gas Charges</td>
+              <td class="text-right"><%= receiptBill.gasCharges || 0 %></td>
+            </tr>
+            <tr>
+              <td>Lift Charges</td>
+              <td class="text-right"><%= receiptBill.liftCharges || 0 %></td>
+            </tr>
+            <% if(receiptBill.otherCharges > 0) { %>
+            <tr>
+              <td>Other Charges</td>
+              <td class="text-right"><%= receiptBill.otherCharges || 0 %></td>
+            </tr>
+            <% } %>
+          </tbody>
+          <tfoot>
+            <tr class="total-row">
+              <td><strong>Total Amount Paid</strong></td>
+              <td class="text-right"><strong>₹<%= receipt.amount %></strong></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Amount in Words -->
+      <div class="mt-4 p-3" style="background: #f8f9fa; border-radius: 10px;">
+        <p class="mb-0"><strong>Amount in Words:</strong>
+          <span id="receipt-words">Loading...</span>
+        </p>
+        <input type="hidden" id="receipt-number" value="<%= receipt.amount %>">
+      </div>
+
+      <!-- Receipt Footer -->
+      <div class="mt-4 text-center text-muted">
+        <small>This is a computer-generated receipt. Payment confirmed via Transaction ID: <%= receipt.invoice %></small><br>
+        <small>Thank you for your payment!</small>
+      </div>
+    </div>
+    <% } %>
+
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+
+<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+  AOS.init({
+    duration: 800,
+    once: true
+  });
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const stripeKey = '<%= typeof stripePublishableKey !== "undefined" ? stripePublishableKey : "" %>';
+  const stripe = stripeKey ? Stripe(stripeKey) : null;
+
+
+  /* -----------------------------
+     BILL DOWNLOAD
+  ------------------------------*/
+
+  const downloadBtn = document.getElementById("download-btn");
+
+  if (downloadBtn) {
+
+    downloadBtn.addEventListener("click", function () {
+
+      const bill = document.getElementById("print-content");
+
+      if (!bill) {
+        alert("Bill content not found");
+        return;
+      }
+
+      const popup = window.open("", "_blank");
+
+      if (!popup) {
+        alert("Popup blocked. Please allow popups.");
+        return;
+      }
+
+      popup.document.write(`
+        <html>
+        <head>
+          <title>Society Bill</title>
+          <style>
+            body{font-family:Arial;padding:20px}
+            table{width:100%;border-collapse:collapse}
+            table,th,td{border:1px solid #ddd}
+            th,td{padding:10px}
+            .text-right{text-align:right}
+            .total-row{font-weight:bold;background:#f8f9fa}
+          </style>
+        </head>
+        <body>
+          ${bill.innerHTML}
+        </body>
+        </html>
+      `);
+
+      popup.document.close();
+
+      popup.onload = function () {
+        popup.print();
+      };
+
+    });
+
+  }
+
+  const payOnlineBtn = document.getElementById("pay-online-btn");
+  if (payOnlineBtn) {
+    payOnlineBtn.addEventListener("click", async function () {
+      if (!stripe) {
+        alert("Stripe publishable key is missing. Please contact admin.");
+        return;
+      }
+      const original = payOnlineBtn.innerHTML;
+      payOnlineBtn.disabled = true;
+      payOnlineBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Redirecting...';
+      try {
+        const response = await fetch('/billing/create-online-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await response.json();
+        if (!response.ok || !data.id) {
+          throw new Error(data.error || 'Unable to start online payment.');
+        }
+        const result = await stripe.redirectToCheckout({ sessionId: data.id });
+        if (result && result.error) {
+          throw new Error(result.error.message || 'Stripe redirection failed.');
+        }
+      } catch (err) {
+        console.error(err);
+        alert(err.message || 'Payment initiation failed.');
+        payOnlineBtn.disabled = false;
+        payOnlineBtn.innerHTML = original;
+      }
+    });
+  }
+
+
+  /* -----------------------------
+     RECEIPT DOWNLOAD
+  ------------------------------*/
+
+  const downloadReceiptBtn = document.getElementById("download-receipt");
+
+  if (downloadReceiptBtn) {
+    downloadReceiptBtn.addEventListener("click", function () {
+      const receipt = document.getElementById("receipt");
+      if (!receipt) {
+        alert("Receipt not available yet.");
+        return;
+      }
+      const popup = window.open("", "_blank");
+      if (!popup) {
+        alert("Popup blocked. Please allow popups.");
+        return;
+      }
+      popup.document.write(`
+        <html>
+        <head>
+          <title>Payment Receipt</title>
+          <style>
+            body{font-family:Arial;padding:20px}
+            table{width:100%;border-collapse:collapse}
+            table,th,td{border:1px solid #ddd}
+            th,td{padding:10px}
+            .text-right{text-align:right}
+            .total-row{font-weight:bold;background:#f8f9fa}
+          </style>
+        </head>
+        <body>
+          ${receipt.innerHTML}
+        </body>
+        </html>
+      `);
+      popup.document.close();
+      popup.onload = function () {
+        popup.print();
+      };
+    });
+    const receiptNumberElement = document.getElementById("receipt-number");
+    const receiptWordsElement = document.getElementById("receipt-words");
+
+    if (receiptNumberElement && receiptWordsElement) {
+      receiptWordsElement.innerHTML = inWords(receiptNumberElement.value);
+    }
+
+  }
+
+
+  /* -----------------------------
+     NUMBER TO WORDS
+  ------------------------------*/
+
+  var a = ['', 'one ', 'two ', 'three ', 'four ', 'five ', 'six ',
+           'seven ', 'eight ', 'nine ', 'ten ', 'eleven ',
+           'twelve ', 'thirteen ', 'fourteen ', 'fifteen ',
+           'sixteen ', 'seventeen ', 'eighteen ', 'nineteen '];
+
+  var b = ['', '', 'twenty', 'thirty', 'forty',
+           'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+
+  function inWords(num) {
+    const parsed = Math.floor(Math.abs(Number(num || 0)));
+    if (!Number.isFinite(parsed)) return '';
+    num = String(parsed);
+    if (num.length > 9) return 'overflow';
+
+    let n = ('000000000' + num).substr(-9)
+      .match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+
+    if (!n) return;
+
+    let str = '';
+
+    str += (n[1] != 0)
+      ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'crore '
+      : '';
+
+    str += (n[2] != 0)
+      ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'lakh '
+      : '';
+
+    str += (n[3] != 0)
+      ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'thousand '
+      : '';
+
+    str += (n[4] != 0)
+      ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'hundred '
+      : '';
+
+    str += (n[5] != 0)
+      ? ((str != '') ? 'and ' : '') +
+        (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + 'only'
+      : '';
+
+    return str || 'zero only';
+
+  }
+
+  const numberElement = document.getElementById("number");
+  const wordsElement = document.getElementById("words");
+
+  if (numberElement && wordsElement) {
+    wordsElement.innerHTML = inWords(numberElement.value);
+  }
+
+
+  /* -----------------------------
+     ADMIN OVERRIDE LIVE TOTAL
+  ------------------------------*/
+
+  const overrideInputs = document.querySelectorAll(
+    "#bill-override-form input[type='number']"
+  );
+
+  overrideInputs.forEach(input => {
+    input.addEventListener("input", calculateOverrideTotal);
+  });
+
+});
+
+
+/* -----------------------------
+   ADMIN FUNCTIONS
+------------------------------*/
+
+function calculateOverrideTotal() {
+
+  const fields = [
+    "societyCharges",
+    "repairsAndMaintenance",
+    "sinkingFund",
+    "waterCharges",
+    "insuranceCharges",
+    "parkingCharges",
+    "electricityCharges",
+    "gasCharges",
+    "liftCharges",
+    "otherCharges"
+  ];
+
+  let total = 0;
+
+  fields.forEach(field => {
+
+    const val =
+      parseFloat(document.getElementById("ov-" + field)?.value) || 0;
+
+    total += val;
+
+  });
+
+  const totalEl = document.getElementById("override-total");
+
+  if (totalEl) totalEl.textContent = total;
+
+  return total;
+
+}
+</script>

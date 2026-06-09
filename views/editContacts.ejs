@@ -1,0 +1,154 @@
+<!-- Modern Edit Emergency Contacts -->
+<%- include('partials/modern-header', {pageTitle: 'Edit Emergency Contacts', pageActive: 'contacts', isAdmin: typeof isAdmin !== 'undefined' ? isAdmin : false}) %>
+
+<section class="page-header" data-aos="fade-down">
+  <div class="container">
+    <h1 class="page-title">Edit Emergency Contacts</h1>
+    <p class="page-subtitle">Update important emergency contact numbers</p>
+  </div>
+</section>
+
+<section class="content-section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="modern-card" data-aos="fade-up">
+          <div class="text-center mb-4">
+            <div class="form-icon mb-3" style="width: 80px; height: 80px; background: #1E3A8A; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+              <i class="fas fa-phone text-white" style="font-size: 2rem;"></i>
+            </div>
+            <h3 style="color: #2d3748; font-weight: 700;">Emergency Contacts</h3>
+            <p class="text-muted">Update contact information for emergency services</p>
+          </div>
+
+          <form action="/editContacts" method="POST">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="plumbingService" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                    <i class="fas fa-wrench me-2"></i>Plumbing Service
+                  </label>
+                  <input name="plumbingServiceName" type="text" id="plumbingServiceName" class="form-control mb-2"
+                         value="<%= contact.plumbingServiceName || '' %>" maxlength="60" placeholder="Contact person / agency name (optional)"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 10px 12px; font-size: 14px; transition: all 0.3s ease;">
+                  <input name="plumbingService" type="tel" id="plumbingService" class="form-control" 
+                         value="<%= contact.plumbingService %>" required pattern="(\+?\d[\d\s-]{2,14})" maxlength="16" title="Enter a valid contact number"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; transition: all 0.3s ease;">
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="medicineShop" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                    <i class="fas fa-pills me-2"></i>Pharmacy
+                  </label>
+                  <input name="medicineShopName" type="text" id="medicineShopName" class="form-control mb-2"
+                         value="<%= contact.medicineShopName || '' %>" maxlength="60" placeholder="Contact person / shop name (optional)"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 10px 12px; font-size: 14px; transition: all 0.3s ease;">
+                  <input name="medicineShop" type="tel" id="medicineShop" class="form-control" 
+                         value="<%= contact.medicineShop %>" required pattern="(\+?\d[\d\s-]{2,14})" maxlength="16" title="Enter a valid contact number"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; transition: all 0.3s ease;">
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="doctor" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                    <i class="fas fa-user-md me-2"></i>Doctor
+                  </label>
+                  <input name="doctorName" type="text" id="doctorName" class="form-control mb-2"
+                         value="<%= contact.doctorName || '' %>" maxlength="60" placeholder="Doctor / clinic name (optional)"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 10px 12px; font-size: 14px; transition: all 0.3s ease;">
+                  <input name="doctor" type="tel" id="doctor" class="form-control" 
+                         value="<%= contact.doctor %>" required pattern="(\+?\d[\d\s-]{2,14})" maxlength="16" title="Enter a valid contact number"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; transition: all 0.3s ease;">
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="ambulance" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                    <i class="fas fa-ambulance me-2"></i>Ambulance
+                  </label>
+                  <input name="ambulanceName" type="text" id="ambulanceName" class="form-control mb-2"
+                         value="<%= contact.ambulanceName || '' %>" maxlength="60" placeholder="Service provider name (optional)"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 10px 12px; font-size: 14px; transition: all 0.3s ease;">
+                  <input name="ambulance" type="tel" id="ambulance" class="form-control" 
+                         value="<%= contact.ambulance %>" required pattern="(\+?\d[\d\s-]{2,14})" maxlength="16" title="Enter a valid contact number"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; transition: all 0.3s ease;">
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="electrician" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                    <i class="fas fa-bolt me-2"></i>Electrician
+                  </label>
+                  <input name="electricianName" type="text" id="electricianName" class="form-control mb-2"
+                         value="<%= contact.electricianName || '' %>" maxlength="60" placeholder="Electrician name (optional)"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 10px 12px; font-size: 14px; transition: all 0.3s ease;">
+                  <input name="electrician" type="tel" id="electrician" class="form-control" 
+                         value="<%= contact.electrician || '9876543210' %>" required pattern="(\+?\d[\d\s-]{2,14})" maxlength="16" title="Enter a valid contact number"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; transition: all 0.3s ease;">
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="fireStation" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                    <i class="fas fa-fire-extinguisher me-2"></i>Fire Station
+                  </label>
+                  <input name="fireStationName" type="text" id="fireStationName" class="form-control mb-2"
+                         value="<%= contact.fireStationName || '' %>" maxlength="60" placeholder="Station name (optional)"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 10px 12px; font-size: 14px; transition: all 0.3s ease;">
+                  <input name="fireStation" type="tel" id="fireStation" class="form-control" 
+                         value="<%= contact.fireStation %>" required pattern="(\+?\d[\d\s-]{2,14})" maxlength="16" title="Enter a valid contact number"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; transition: all 0.3s ease;">
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="policeStation" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                    <i class="fas fa-shield-alt me-2"></i>Police Station
+                  </label>
+                  <input name="policeStationName" type="text" id="policeStationName" class="form-control mb-2"
+                         value="<%= contact.policeStationName || '' %>" maxlength="60" placeholder="Station name (optional)"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 10px 12px; font-size: 14px; transition: all 0.3s ease;">
+                  <input name="policeStation" type="tel" id="policeStation" class="form-control" 
+                         value="<%= contact.policeStation %>" required pattern="(\+?\d[\d\s-]{2,14})" maxlength="16" title="Enter a valid contact number"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; transition: all 0.3s ease;">
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="guard" style="color: #4a5568; font-weight: 600; margin-bottom: 8px; display: block;">
+                    <i class="fas fa-user-shield me-2"></i>Guard
+                  </label>
+                  <input name="guardName" type="text" id="guardName" class="form-control mb-2"
+                         value="<%= contact.guardName || '' %>" maxlength="60" placeholder="Guard name (optional)"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 10px 12px; font-size: 14px; transition: all 0.3s ease;">
+                  <input name="guard" type="tel" id="guard" class="form-control" 
+                         value="<%= contact.guard %>" required pattern="(\+?\d[\d\s-]{2,14})" maxlength="16" title="Enter a valid contact number"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px 15px; font-size: 15px; transition: all 0.3s ease;">
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex gap-3 mt-4">
+              <button type="submit" class="btn-modern flex-fill">
+                <i class="fas fa-save me-2"></i>Save Changes
+              </button>
+              <a href="/contacts" class="btn-modern btn-warning flex-fill">
+                <i class="fas fa-times me-2"></i>Cancel
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

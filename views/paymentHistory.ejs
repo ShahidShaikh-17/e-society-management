@@ -1,0 +1,254 @@
+<!-- Modern Payment History -->
+<%- include('partials/modern-header', {pageTitle: 'Payment History', pageActive: 'paymentHistory', isAdmin: isAdmin}) %>
+
+<section class="page-header" data-aos="fade-down">
+  <div class="container">
+    <h1 class="page-title">Payment History</h1>
+    <p class="page-subtitle">Track your monthly bill payments and download receipts</p>
+  </div>
+</section>
+
+<section class="content-section">
+  <div class="container">
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+      <div class="col-md-4" data-aos="fade-up">
+        <div class="modern-card text-center" style="background: #e8f5e9;">
+          <div class="summary-icon mb-3" style="width: 60px; height: 60px; background: #198754; border-radius: 15px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            <i class="fas fa-check-circle text-white" style="font-size: 1.5rem;"></i>
+          </div>
+          <h4 style="color: #155724; font-weight: 700;">Paid Bills</h4>
+          <p style="font-size: 2rem; font-weight: 800; color: #155724; margin-bottom: 0;"><%= paidCount %></p>
+        </div>
+      </div>
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="modern-card text-center" style="background: #fff5f5;">
+          <div class="summary-icon mb-3" style="width: 60px; height: 60px; background: #dc3545; border-radius: 15px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            <i class="fas fa-clock text-white" style="font-size: 1.5rem;"></i>
+          </div>
+          <h4 style="color: #721c24; font-weight: 700;">Pending Bills</h4>
+          <p style="font-size: 2rem; font-weight: 800; color: #721c24; margin-bottom: 0;"><%= unpaidCount %></p>
+        </div>
+      </div>
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="modern-card text-center" style="background: #eaf2ff;">
+          <div class="summary-icon mb-3" style="width: 60px; height: 60px; background: #1E3A8A; border-radius: 15px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            <i class="fas fa-rupee-sign text-white" style="font-size: 1.5rem;"></i>
+          </div>
+          <h4 style="color: #004085; font-weight: 700;">Total Paid</h4>
+          <p style="font-size: 2rem; font-weight: 800; color: #004085; margin-bottom: 0;">₹<%= totalPaid %></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment History Table -->
+    <div class="modern-card" data-aos="fade-up" data-aos-delay="300">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead style="background: #f8f9fa;">
+            <tr>
+              <th><i class="fas fa-calendar me-2"></i>Month</th>
+              <th><i class="fas fa-file-invoice me-2"></i>Invoice</th>
+              <th><i class="fas fa-rupee-sign me-2"></i>Amount</th>
+              <th><i class="fas fa-info-circle me-2"></i>Status</th>
+              <% if (typeof useNewBilling !== 'undefined' && useNewBilling) { %>
+              <th>Method</th>
+              <% } %>
+              <th><i class="fas fa-cog me-2"></i>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% paymentHistory.forEach((payment, index) => { %>
+              <tr>
+                <td>
+                  <strong><%= payment.month %> <%= payment.year %></strong>
+                  <% if(payment.date) { %>
+                    <br><small class="text-muted"><i class="fas fa-clock me-1"></i><%= new Date(payment.date).toLocaleDateString() %></small>
+                  <% } %>
+                </td>
+                <td>
+                  <span class="badge bg-light text-dark">
+                    <i class="fas fa-receipt me-1"></i><%= payment.invoice %>
+                  </span>
+                </td>
+                <td>
+                  <strong style="color: #2d3748;">₹<%= payment.amount %></strong>
+                </td>
+                <td>
+                  <% if(payment.status === 'paid') { %>
+                    <span class="status-badge status-success">
+                      <i class="fas fa-check-circle me-1"></i>Paid
+                    </span>
+                  <% } else { %>
+                    <span class="status-badge status-warning">
+                      <i class="fas fa-clock me-1"></i>Pending
+                    </span>
+                  <% } %>
+                </td>
+                <% if (typeof useNewBilling !== 'undefined' && useNewBilling) { %>
+                <td><span class="badge bg-secondary"><%= payment.method || '-' %></span></td>
+                <% } %>
+                <td>
+                  <% if(payment.status === 'paid' && (!(typeof useNewBilling !== 'undefined' && useNewBilling))) { %>
+                    <button class="btn-modern btn-info btn-sm" onclick="downloadReceipt('<%= payment.invoice %>', '<%= payment.month %>', '<%= payment.year %>')">
+                      <i class="fas fa-download me-1"></i>Receipt
+                    </button>
+                  <% } else if (payment.status !== 'paid') { %>
+                    <a href="/bill" class="btn-modern btn-success btn-sm">
+                      <i class="fas fa-credit-card me-1"></i>Pay Now
+                    </a>
+                  <% } else { %>
+                    <span class="text-muted small">Recorded</span>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+      
+      <% if(paymentHistory.length === 0) { %>
+        <div class="text-center py-5">
+          <div class="empty-icon mb-3" style="width: 100px; height: 100px; background: #1E3A8A; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            <i class="fas fa-history text-white" style="font-size: 3rem;"></i>
+          </div>
+          <h3 style="color: #2d3748; font-weight: 700;">No Payment History</h3>
+          <p class="text-muted">Your payment history will appear here once you start making payments.</p>
+          <a href="/bill" class="btn-modern">
+            <i class="fas fa-file-invoice-dollar me-2"></i>View Current Bill
+          </a>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<!-- Receipt Modal -->
+<div class="modal fade" id="receiptModal" tabindex="-1" aria-labelledby="receiptModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="receiptModalLabel">Payment Receipt</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="receiptContent">
+        <!-- Receipt content will be loaded here -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-modern btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>
+
+<script>
+function downloadReceipt(invoice, month, year) {
+  // Show loading
+  const modal = new bootstrap.Modal(document.getElementById('receiptModal'));
+  document.getElementById('receiptContent').innerHTML = `
+    <div class="text-center py-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2">Loading receipt...</p>
+    </div>
+  `;
+  modal.show();
+  
+  // Fetch receipt data
+  fetch(`/receipt/${invoice}`)
+    .then(response => response.json())
+    .then(data => {
+      if(data.success) {
+        displayReceipt(data.receipt);
+      } else {
+        document.getElementById('receiptContent').innerHTML = `
+          <div class="alert alert-danger">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            ${data.message}
+          </div>
+        `;
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      document.getElementById('receiptContent').innerHTML = `
+        <div class="alert alert-danger">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          Failed to load receipt. Please try again.
+        </div>
+      `;
+    });
+}
+
+function displayReceipt(receipt) {
+  const receiptHtml = `
+    <div id="receipt-${receipt.invoice}">
+      <div class="receipt-header text-center mb-4" style="background: #198754; color: white; padding: 30px; border-radius: 10px;">
+        <h3 style="font-weight: 800; margin-bottom: 10px;">PAYMENT RECEIPT</h3>
+        <p style="margin-bottom: 0;">${receipt.societyName}</p>
+      </div>
+      
+      <div class="receipt-body">
+        <div class="row mb-3">
+          <div class="col-6">
+            <p><strong>Invoice No:</strong> ${receipt.invoice}</p>
+            <p><strong>Payment Date:</strong> ${new Date(receipt.date).toLocaleDateString()}</p>
+          </div>
+          <div class="col-6">
+            <p><strong>Resident:</strong> ${receipt.residentName}</p>
+            <p><strong>Flat:</strong> ${receipt.flatNumber}</p>
+          </div>
+        </div>
+        
+        <table class="table table-bordered">
+          <thead style="background: #f8f9fa;">
+            <tr>
+              <th>Description</th>
+              <th style="text-align: right;">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${receipt.billDetails.societyCharges ? `<tr><td>Society Charges</td><td style="text-align: right;">₹${receipt.billDetails.societyCharges}</td></tr>` : ''}
+            ${receipt.billDetails.repairsAndMaintenance ? `<tr><td>Repairs & Maintenance</td><td style="text-align: right;">₹${receipt.billDetails.repairsAndMaintenance}</td></tr>` : ''}
+            ${receipt.billDetails.sinkingFund ? `<tr><td>Sinking Fund</td><td style="text-align: right;">₹${receipt.billDetails.sinkingFund}</td></tr>` : ''}
+            ${receipt.billDetails.waterCharges ? `<tr><td>Water Charges</td><td style="text-align: right;">₹${receipt.billDetails.waterCharges}</td></tr>` : ''}
+            ${receipt.billDetails.insuranceCharges ? `<tr><td>Insurance Charges</td><td style="text-align: right;">₹${receipt.billDetails.insuranceCharges}</td></tr>` : ''}
+            ${receipt.billDetails.parkingCharges ? `<tr><td>Parking Charges</td><td style="text-align: right;">₹${receipt.billDetails.parkingCharges}</td></tr>` : ''}
+            ${receipt.billDetails.electricityCharges ? `<tr><td>Electricity Charges</td><td style="text-align: right;">₹${receipt.billDetails.electricityCharges}</td></tr>` : ''}
+            ${receipt.billDetails.gasCharges ? `<tr><td>Gas Charges</td><td style="text-align: right;">₹${receipt.billDetails.gasCharges}</td></tr>` : ''}
+            ${receipt.billDetails.liftCharges ? `<tr><td>Lift Charges</td><td style="text-align: right;">₹${receipt.billDetails.liftCharges}</td></tr>` : ''}
+            ${receipt.billDetails.otherCharges ? `<tr><td>Other Charges</td><td style="text-align: right;">₹${receipt.billDetails.otherCharges}</td></tr>` : ''}
+          </tbody>
+          <tfoot style="background: #28a745; color: white;">
+            <tr>
+              <th>Total Amount</th>
+              <th style="text-align: right;">₹${receipt.amount}</th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  `;
+  
+  document.getElementById('receiptContent').innerHTML = receiptHtml;
+}
+
+function downloadCurrentReceipt() {
+  const receiptId = document.querySelector('[id^="receipt-"]').id;
+  const invoice = receiptId.replace('receipt-', '');
+  
+  const element = document.getElementById(receiptId);
+  const opt = {
+    margin: 1,
+    filename: `receipt-${invoice}.pdf`,
+    image: { type: 'jpeg', quality: 1 },
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+  };
+  
+  html2pdf().from(element).set(opt).save();
+}
+</script>

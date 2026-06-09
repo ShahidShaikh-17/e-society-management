@@ -1,0 +1,94 @@
+<!-- Modern Payment Success -->
+<%- include('partials/modern-header', {pageTitle: 'Payment Success', pageActive: 'bill', isAdmin: typeof isAdmin !== 'undefined' ? isAdmin : false}) %>
+
+<section class="page-header" data-aos="fade-down">
+  <div class="container">
+    <h1 class="page-title">Payment Success</h1>
+    <p class="page-subtitle">Your payment has been processed successfully</p>
+  </div>
+</section>
+
+<section class="content-section">
+  <div class="container">
+    <!-- Success Card -->
+    <div class="modern-card" data-aos="fade-up">
+      <div class="text-center mb-4">
+        <div class="success-icon mb-4" style="width: 120px; height: 120px; background: #198754; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; animation: pulse 2s infinite;">
+          <i class="fas fa-check text-white" style="font-size: 4rem;"></i>
+        </div>
+        <h2 style="color: #28a745; font-weight: 800; margin-bottom: 10px;">Payment Successful!</h2>
+        <p style="color: #6c757d; font-size: 1.1rem;">Thank you for your payment. Your transaction has been completed successfully.</p>
+      </div>
+
+      <!-- Receipt Details -->
+      <div id="receipt" class="receipt-container" style="background: #f8f9fa; border-radius: 20px; padding: 40px; margin: 30px 0;">
+        <div class="text-center mb-4">
+          <h3 style="color: #2d3748; font-weight: 700; margin-bottom: 20px;">Payment Receipt</h3>
+          <div class="receipt-number" style="background: #28a745; color: white; padding: 10px 20px; border-radius: 25px; display: inline-block; font-weight: 600;">
+            <i class="fas fa-receipt me-2"></i>Receipt #<%= invoice %>
+          </div>
+        </div>
+
+        <div class="row payment-details" style="background: white; border-radius: 15px; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+          <div class="col-md-6 text-center mb-3">
+            <div class="detail-item">
+              <h6 style="color: #6c757d; font-size: 0.9rem; margin-bottom: 5px;">AMOUNT PAID</h6>
+              <p style="font-size: 2rem; font-weight: 800; color: #28a745; margin-bottom: 0;">₹<%= amount %></p>
+            </div>
+          </div>
+          <div class="col-md-6 text-center mb-3">
+            <div class="detail-item">
+              <h6 style="color: #6c757d; font-size: 0.9rem; margin-bottom: 5px;">DATE PAID</h6>
+              <p style="font-size: 1.2rem; font-weight: 600; color: #2d3748; margin-bottom: 0;"><%= date %></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center mt-4">
+          <p style="color: #6c757d; margin-bottom: 0;">
+            <i class="fas fa-check-circle me-2"></i>
+            This receipt serves as proof of payment for your records.
+          </p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="text-center">
+        <button id="download-receipt" class="btn-modern btn-success me-3" onclick="downloadReceipt()">
+          <i class="fas fa-download me-2"></i>Download Receipt
+        </button>
+        <a href="/payment-history" class="btn-modern">
+          <i class="fas fa-history me-2"></i>View Payment History
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+
+<style>
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+function downloadReceipt() {
+  const element = document.getElementById('receipt');
+  const invoiceNumber = '<%= invoice %>';
+  const opt = {
+    margin: 1,
+    filename: 'receipt-' + invoiceNumber + '.pdf',
+    image: { type: 'jpeg', quality: 1 },
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+  };
+  
+  html2pdf().from(element).set(opt).save();
+}
+</script>

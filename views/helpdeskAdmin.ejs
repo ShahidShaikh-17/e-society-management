@@ -1,0 +1,203 @@
+<!-- Modern Helpdesk Admin -->
+<%- include('partials/modern-header', {pageTitle: 'Helpdesk Admin', pageActive: 'helpdesk', isAdmin: typeof isAdmin !== 'undefined' ? isAdmin : false}) %>
+
+<section class="page-header" data-aos="fade-down">
+  <div class="container">
+    <h1 class="page-title">Helpdesk Admin</h1>
+    <p class="page-subtitle">Manage and resolve community complaints</p>
+  </div>
+</section>
+
+<section class="content-section">
+  <div class="container">
+    <div class="text-center mb-4" data-aos="fade-up">
+      <a href="/complaint" class="btn-modern">
+        <i class="fas fa-plus-circle me-2"></i>Raise Complaint
+      </a>
+    </div>
+
+    <!-- Open Tickets Section -->
+    <div class="mb-4">
+      <h3 style="color: #ff6b6b; font-weight: 700;">
+        <i class="fas fa-exclamation-circle me-2"></i>Open Tickets
+      </h3>
+    </div>
+
+    <div class="row">
+      <% users.forEach((user) => { %>
+        <% let isUserTicketOpen = user.complaints && user.complaints.length > 0 && user.complaints.some(ticket => ticket.status === 'open') %>
+        <% if(isUserTicketOpen) { %>
+          <% user.complaints.forEach((complaint,index) => { %>
+            <% if(complaint.status === 'open'){ %>
+              <div class="col-lg-6 mb-4" data-aos="fade-up" data-aos-delay="<%= index * 100 %>">
+                <div class="modern-card">
+                  <div class="d-flex align-items-start mb-3">
+                    <div class="complaint-icon me-3" style="width: 50px; height: 50px; background: #1E3A8A; border-radius: 15px; display: flex; align-items: center; justify-content: center;">
+                      <i class="fas fa-tools text-white" style="font-size: 1.2rem;"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                      <h4 class="mb-2" style="color: #2d3748; font-weight: 700;"><%= complaint.category %></h4>
+                      <p class="text-muted mb-2" style="font-size: 0.9rem;">
+                        <i class="fas fa-calendar me-2"></i><%= complaint.date %> - 
+                        <span class="badge bg-light text-dark">
+                          <i class="fas fa-tag me-1"></i><%= complaint.type %>
+                        </span>
+                      </p>
+                      <div class="mb-2">
+                        <span class="status-badge status-open">
+                          <i class="fas fa-clock me-1"></i>Open
+                        </span>
+                      </div>
+                      <p class="text-muted mb-2" style="font-size: 0.85rem;">
+                        <i class="fas fa-user me-2"></i><%=user.firstName%> <%=user.lastName%> - 
+                        <i class="fas fa-home me-2"></i><%=user.flatNumber%>
+                      </p>
+                    </div>
+                  </div>
+                  <div class="complaint-content p-3 mb-3" style="background: #f8f9fa; border-radius: 10px; color: #718096; line-height: 1.6;">
+                    <p class="mb-0"><%= complaint.description %></p>
+                  </div>
+                  <% if(complaint.attachments && complaint.attachments.length > 0) { %>
+                    <div class="attachments-section mb-3">
+                      <h6 class="mb-2" style="color: #4a5568; font-weight: 600;">
+                        <i class="fas fa-images me-2"></i>Attachments
+                      </h6>
+                      <div class="row g-2">
+                        <% complaint.attachments.forEach((attachment, i) => { %>
+                          <div class="col-6 col-md-4">
+                            <a href="<%= attachment.url %>" target="_blank" class="d-block">
+                              <img src="<%= attachment.url %>" alt="Attachment <%= i+1 %>" 
+                                   class="img-fluid rounded" 
+                                   style="width: 100%; height: 120px; object-fit: cover; border: 2px solid #e9ecef;">
+                            </a>
+                          </div>
+                        <% }) %>
+                      </div>
+                    </div>
+                  <% } %>
+                  <form action="/closeTicket" method="POST" class="d-inline">
+                    <input type="hidden" name="userId" value="<%= user._id %>">
+                    <input type="hidden" name="ticketIndex" value="<%= index %>">
+                    <div class="mb-3">
+                      <label class="form-label" style="color: #4a5568; font-weight: 600;">
+                        <i class="fas fa-comment me-2"></i>Resolution Note (Optional)
+                      </label>
+                      <textarea name="resolutionNote" class="form-control" rows="2" 
+                                placeholder="Add a note about how this issue was resolved..."
+                                style="border: 2px solid #e9ecef; border-radius: 10px; padding: 10px; font-size: 14px;"></textarea>
+                    </div>
+                    <button type="submit" class="btn-modern btn-success">
+                      <i class="fas fa-check-circle me-2"></i>Mark as Resolved
+                    </button>
+                  </form>
+                </div>
+              </div>
+            <% } %>
+          <% }) %>
+        <% } %>
+      <% }) %>
+    </div>
+
+    <% let hasAnyOpenTickets = users.some(user => user.complaints && user.complaints.length > 0 && user.complaints.some(ticket => ticket.status === 'open')); %>
+    <% if(!hasAnyOpenTickets){ %>
+      <div class="text-center py-4" data-aos="fade-up">
+        <div class="empty-state" style="max-width: 400px; margin: 0 auto;">
+          <div class="empty-icon mb-3" style="width: 80px; height: 80px; background: #1E3A8A; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            <i class="fas fa-clipboard-check text-white" style="font-size: 2rem;"></i>
+          </div>
+          <h4 style="color: #2d3748; font-weight: 700;">All Tickets Resolved</h4>
+          <p class="text-muted">Great job! All community complaints have been resolved.</p>
+        </div>
+      </div>
+    <% } %>
+
+    <!-- Resolved Tickets Section -->
+    <div class="mt-5 mb-4">
+      <h3 style="color: #28a745; font-weight: 700;">
+        <i class="fas fa-check-circle me-2"></i>Resolved Tickets
+      </h3>
+    </div>
+
+    <div class="row">
+      <% users.forEach((user) => { %>
+        <% let hasResolved = user.complaints && user.complaints.length > 0 && user.complaints.some(ticket => ticket.status === 'close') %>
+        <% if(hasResolved) { %>
+          <% user.complaints.forEach((complaint,index) => { %>
+            <% if(complaint.status === 'close'){ %>
+              <div class="col-lg-6 mb-4" data-aos="fade-up">
+                <div class="modern-card" style="opacity: 0.85;">
+                  <div class="d-flex align-items-start mb-3">
+                    <div class="complaint-icon me-3" style="width: 50px; height: 50px; background: #1E3A8A; border-radius: 15px; display: flex; align-items: center; justify-content: center;">
+                      <i class="fas fa-check text-white" style="font-size: 1.2rem;"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                      <h4 class="mb-2" style="color: #2d3748; font-weight: 700;"><%= complaint.category %></h4>
+                      <p class="text-muted mb-2" style="font-size: 0.9rem;">
+                        <i class="fas fa-calendar me-2"></i><%= complaint.date %> - 
+                        <span class="badge bg-light text-dark">
+                          <i class="fas fa-tag me-1"></i><%= complaint.type %>
+                        </span>
+                      </p>
+                      <div class="mb-2">
+                        <span class="status-badge status-closed">
+                          <i class="fas fa-check-circle me-1"></i>Resolved
+                        </span>
+                      </div>
+                      <p class="text-muted mb-2" style="font-size: 0.85rem;">
+                        <i class="fas fa-user me-2"></i><%=user.firstName%> <%=user.lastName%> - 
+                        <i class="fas fa-home me-2"></i><%=user.flatNumber%>
+                      </p>
+                    </div>
+                  </div>
+                  <div class="complaint-content p-3 mb-3" style="background: #f8f9fa; border-radius: 10px; color: #718096; line-height: 1.6;">
+                    <p class="mb-0"><%= complaint.description %></p>
+                  </div>
+                  <% if(complaint.attachments && complaint.attachments.length > 0) { %>
+                    <div class="attachments-section mb-3">
+                      <h6 class="mb-2" style="color: #4a5568; font-weight: 600;">
+                        <i class="fas fa-images me-2"></i>Attachments
+                      </h6>
+                      <div class="row g-2">
+                        <% complaint.attachments.forEach((attachment, i) => { %>
+                          <div class="col-6 col-md-4">
+                            <a href="<%= attachment.url %>" target="_blank" class="d-block">
+                              <img src="<%= attachment.url %>" alt="Attachment <%= i+1 %>" 
+                                   class="img-fluid rounded" 
+                                   style="width: 100%; height: 120px; object-fit: cover; border: 2px solid #e9ecef;">
+                            </a>
+                          </div>
+                        <% }) %>
+                      </div>
+                    </div>
+                  <% } %>
+                  <% if(complaint.resolutionNote) { %>
+                    <div class="resolution-note p-3" style="background: #d4edda; border-left: 4px solid #28a745; border-radius: 5px;">
+                      <h6 class="mb-2" style="color: #155724; font-weight: 600;">
+                        <i class="fas fa-check-circle me-2"></i>Resolution Note
+                      </h6>
+                      <p class="mb-1" style="color: #155724;"><%= complaint.resolutionNote %></p>
+                      <% if(complaint.resolvedAt) { %>
+                        <small class="text-muted">Resolved on: <%= complaint.resolvedAt %></small>
+                      <% } %>
+                    </div>
+                  <% } %>
+                  <div class="mt-3">
+                    <form action="/deleteTicket" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this resolved complaint?')">
+                      <input type="hidden" name="userId" value="<%= user._id %>">
+                      <input type="hidden" name="ticketIndex" value="<%= index %>">
+                      <button type="submit" class="btn btn-outline-danger btn-sm">
+                        <i class="fas fa-trash me-2"></i>Delete Complaint
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            <% } %>
+          <% }) %>
+        <% } %>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

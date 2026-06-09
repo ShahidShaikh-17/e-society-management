@@ -1,0 +1,212 @@
+<!-- Modern Bill Overrides Admin -->
+<%- include('partials/modern-header', {pageTitle: 'Bill Overrides', pageActive: 'bill', isAdmin: isAdmin}) %>
+
+<section class="page-header" data-aos="fade-down">
+  <div class="container">
+    <h1 class="page-title">Bill Overrides</h1>
+    <p class="page-subtitle">Override individual user bills for <%= currentMonth %> <%= currentYear %></p>
+  </div>
+</section>
+
+<section class="content-section">
+  <div class="container">
+    <!-- Society Bill Reference -->
+    <div class="modern-card mb-4" data-aos="fade-up">
+      <h4 class="mb-3" style="color: #2d3748; font-weight: 600;">
+        <i class="fas fa-building me-2"></i>Current Society Bill (Reference)
+      </h4>
+      <div class="row">
+        <div class="col-md-3"><strong>Society Charges:</strong> ₹<%= societyBill.societyCharges || 0 %></div>
+        <div class="col-md-3"><strong>Repairs & Maintenance:</strong> ₹<%= societyBill.repairsAndMaintenance || 0 %></div>
+        <div class="col-md-3"><strong>Sinking Fund:</strong> ₹<%= societyBill.sinkingFund || 0 %></div>
+        <div class="col-md-3"><strong>Water Charges:</strong> ₹<%= societyBill.waterCharges || 0 %></div>
+      </div>
+      <div class="row mt-2">
+        <div class="col-md-3"><strong>Insurance:</strong> ₹<%= societyBill.insuranceCharges || 0 %></div>
+        <div class="col-md-3"><strong>Parking:</strong> ₹<%= societyBill.parkingCharges || 0 %></div>
+        <div class="col-md-3"><strong>Electricity:</strong> ₹<%= societyBill.electricityCharges || 0 %></div>
+        <div class="col-md-3"><strong>Gas:</strong> ₹<%= societyBill.gasCharges || 0 %></div>
+      </div>
+      <div class="row mt-2">
+        <div class="col-md-3"><strong>Lift Charges:</strong> ₹<%= societyBill.liftCharges || 0 %></div>
+        <div class="col-md-3"><strong>Other Charges:</strong> ₹<%= societyBill.otherCharges || 0 %></div>
+        <div class="col-md-3">
+          <strong>Total:</strong> ₹<%=
+            (societyBill.societyCharges || 0) +
+            (societyBill.repairsAndMaintenance || 0) +
+            (societyBill.sinkingFund || 0) +
+            (societyBill.waterCharges || 0) +
+            (societyBill.insuranceCharges || 0) +
+            (societyBill.parkingCharges || 0) +
+            (societyBill.electricityCharges || 0) +
+            (societyBill.gasCharges || 0) +
+            (societyBill.liftCharges || 0) +
+            (societyBill.otherCharges || 0)
+          %>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Bill Overrides -->
+    <div class="row">
+      <% const societyDefaultTotal = (societyBill.societyCharges || 0) + (societyBill.repairsAndMaintenance || 0) + (societyBill.sinkingFund || 0) + (societyBill.waterCharges || 0) + (societyBill.insuranceCharges || 0) + (societyBill.parkingCharges || 0) + (societyBill.electricityCharges || 0) + (societyBill.gasCharges || 0) + (societyBill.liftCharges || 0) + (societyBill.otherCharges || 0); %>
+      <% users.forEach((user, index) => { %>
+        <% const currentOverride = (user.billOverrides || []).find(o => o.month === currentMonth && o.year === currentYear); %>
+        <div class="col-lg-6 mb-4" data-aos="fade-up" data-aos-delay="<%= index * 100 %>">
+          <div class="modern-card">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div>
+                <h5 class="mb-1" style="color: #2d3748; font-weight: 700;">
+                  <%= user.firstName %> <%= user.lastName %>
+                </h5>
+                <p class="text-muted mb-0">Flat <%= user.flatNumber %></p>
+              </div>
+              <% if(currentOverride) { %>
+                <span class="badge bg-warning text-dark">Override Active</span>
+              <% } %>
+            </div>
+
+            <% if(currentOverride) { %>
+              <div class="alert alert-info mb-3">
+                <strong>Current Override:</strong> ₹<%= currentOverride.amount %>
+                <% if(currentOverride.note) { %>
+                  <br><small>Note: <%= currentOverride.note %></small>
+                <% } %>
+              </div>
+            <% } %>
+
+            <form action="/overrideBill" method="POST">
+              <input type="hidden" name="userId" value="<%= user._id %>">
+              <input type="hidden" name="month" value="<%= currentMonth %>">
+              <input type="hidden" name="year" value="<%= currentYear %>">
+
+              <div class="row g-3">
+                <div class="col-12">
+                  <label class="form-label" style="color: #4a5568; font-weight: 600;">
+                    <i class="fas fa-rupee-sign me-2"></i>Total Bill Amount
+                  </label>
+                  <input type="number" name="amount" class="form-control"
+                         value="<%= currentOverride ? currentOverride.amount : societyDefaultTotal %>"
+                         required step="0.01" min="0"
+                         style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px;">
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label" style="color: #4a5568; font-weight: 600;">
+                    <i class="fas fa-comment me-2"></i>Note (Optional)
+                  </label>
+                  <textarea name="note" class="form-control" rows="2"
+                            placeholder="Reason for bill override..."
+                            style="border: 2px solid #e9ecef; border-radius: 10px; padding: 12px;"><%= currentOverride ? currentOverride.note : '' %></textarea>
+                </div>
+
+                <!-- Bill Components (Optional Override) -->
+                <div class="col-12">
+                  <details class="mb-3">
+                    <summary style="cursor: pointer; color: #4a5568; font-weight: 600; margin-bottom: 10px;">
+                      <i class="fas fa-plus-circle me-2"></i>Override Individual Bill Components (Optional)
+                    </summary>
+                    <div class="row g-2 mt-2">
+                      <div class="col-md-6">
+                        <input type="number" name="societyCharges" placeholder="Society Charges"
+                               value="<%= currentOverride && currentOverride.billDetails ? currentOverride.billDetails.societyCharges : societyBill.societyCharges || 0 %>"
+                               class="form-control" step="0.01" min="0">
+                      </div>
+                      <div class="col-md-6">
+                        <input type="number" name="repairsAndMaintenance" placeholder="Repairs & Maintenance"
+                               value="<%= currentOverride && currentOverride.billDetails ? currentOverride.billDetails.repairsAndMaintenance : societyBill.repairsAndMaintenance || 0 %>"
+                               class="form-control" step="0.01" min="0">
+                      </div>
+                      <div class="col-md-6">
+                        <input type="number" name="sinkingFund" placeholder="Sinking Fund"
+                               value="<%= currentOverride && currentOverride.billDetails ? currentOverride.billDetails.sinkingFund : societyBill.sinkingFund || 0 %>"
+                               class="form-control" step="0.01" min="0">
+                      </div>
+                      <div class="col-md-6">
+                        <input type="number" name="waterCharges" placeholder="Water Charges"
+                               value="<%= currentOverride && currentOverride.billDetails ? currentOverride.billDetails.waterCharges : societyBill.waterCharges || 0 %>"
+                               class="form-control" step="0.01" min="0">
+                      </div>
+                      <div class="col-md-6">
+                        <input type="number" name="insuranceCharges" placeholder="Insurance"
+                               value="<%= currentOverride && currentOverride.billDetails ? currentOverride.billDetails.insuranceCharges : societyBill.insuranceCharges || 0 %>"
+                               class="form-control" step="0.01" min="0">
+                      </div>
+                      <div class="col-md-6">
+                        <input type="number" name="parkingCharges" placeholder="Parking"
+                               value="<%= currentOverride && currentOverride.billDetails ? currentOverride.billDetails.parkingCharges : societyBill.parkingCharges || 0 %>"
+                               class="form-control" step="0.01" min="0">
+                      </div>
+                      <div class="col-md-6">
+                        <input type="number" name="electricityCharges" placeholder="Electricity"
+                               value="<%= currentOverride && currentOverride.billDetails ? currentOverride.billDetails.electricityCharges : societyBill.electricityCharges || 0 %>"
+                               class="form-control" step="0.01" min="0">
+                      </div>
+                      <div class="col-md-6">
+                        <input type="number" name="gasCharges" placeholder="Gas"
+                               value="<%= currentOverride && currentOverride.billDetails ? currentOverride.billDetails.gasCharges : societyBill.gasCharges || 0 %>"
+                               class="form-control" step="0.01" min="0">
+                      </div>
+                      <div class="col-md-6">
+                        <input type="number" name="liftCharges" placeholder="Lift Charges"
+                               value="<%= currentOverride && currentOverride.billDetails ? currentOverride.billDetails.liftCharges : societyBill.liftCharges || 0 %>"
+                               class="form-control" step="0.01" min="0">
+                      </div>
+                      <div class="col-md-6">
+                        <input type="number" name="otherCharges" placeholder="Other Charges"
+                               value="<%= currentOverride && currentOverride.billDetails ? currentOverride.billDetails.otherCharges : societyBill.otherCharges || 0 %>"
+                               class="form-control" step="0.01" min="0">
+                      </div>
+                    </div>
+                  </details>
+                </div>
+
+                <div class="col-12">
+                  <button type="submit" class="btn-modern btn-success">
+                    <i class="fas fa-save me-2"></i>
+                    <%= currentOverride ? 'Update Override' : 'Create Override' %>
+                  </button>
+                  <% if(currentOverride) { %>
+                    <a href="/removeOverride?userId=<%= user._id %>" class="btn btn-outline-danger ms-2"
+                       onclick="return confirm('Remove bill override for this user?')">
+                      <i class="fas fa-trash me-2"></i>Remove Override
+                    </a>
+                  <% } %>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+
+<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 800,
+    once: true
+  });
+
+  // Auto-calculate override total when components change
+  document.addEventListener('DOMContentLoaded', function() {
+    const forms = document.querySelectorAll('form[action="/overrideBill"]');
+    
+    forms.forEach(form => {
+      const amountInput = form.querySelector('input[name="amount"]');
+      const componentInputs = form.querySelectorAll('input[name="societyCharges"], input[name="repairsAndMaintenance"], input[name="sinkingFund"], input[name="waterCharges"], input[name="insuranceCharges"], input[name="parkingCharges"], input[name="electricityCharges"], input[name="gasCharges"], input[name="liftCharges"], input[name="otherCharges"]');
+      
+      componentInputs.forEach(input => {
+        input.addEventListener('input', function() {
+          const total = Array.from(componentInputs).reduce((sum, inp) => sum + (parseFloat(inp.value) || 0), 0);
+          if (total > 0) {
+            amountInput.value = total.toFixed(2);
+          }
+        });
+      });
+    });
+  });
+</script>

@@ -1,0 +1,68 @@
+<!-- Modern Noticeboard -->
+<%- include('partials/modern-header', {pageTitle: 'Noticeboard', pageActive: 'noticeboard', isAdmin: isAdmin}) %>
+
+<section class="page-header" data-aos="fade-down">
+  <div class="container">
+    <h1 class="page-title">Noticeboard</h1>
+    <p class="page-subtitle">Stay updated with latest announcements and notices</p>
+  </div>
+</section>
+
+<section class="content-section">
+  <div class="container">
+    <% if(isAdmin){ %>
+      <div class="text-center mb-4" data-aos="fade-up">
+        <a href="/notice" class="btn-modern">
+          <i class="fas fa-plus-circle me-2"></i>Create Notice
+        </a>
+      </div>
+    <% } %>
+
+    <div class="row">
+      <% notices.reverse().forEach(function(notice, index){ %>
+        <div class="col-lg-6 mb-4" data-aos="fade-up" data-aos-delay="<%= index * 100 %>">
+          <div class="modern-card">
+            <div class="d-flex align-items-start mb-3">
+              <div class="notice-icon me-3" style="width: 50px; height: 50px; background: #1E3A8A; border-radius: 15px; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-bullhorn text-white" style="font-size: 1.2rem;"></i>
+              </div>
+              <div class="flex-grow-1">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <h4 class="mb-0" style="color: #2d3748; font-weight: 700;"><%= notice.subject %></h4>
+                  <% if(isAdmin && notice.date) { %>
+                    <form action="/delete-notice" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this notice?');">
+                      <input type="hidden" name="noticeIndex" value="<%= notices.length - 1 - index %>">
+                      <button type="submit" class="btn btn-sm" style="background: none; border: none; color: #dc3545; padding: 2px 8px; border-radius: 4px; transition: all 0.3s ease;" title="Delete Notice" onmouseover="this.style.color='#c82333'; this.style.background='#f8d7da';" onmouseout="this.style.color='#dc3545'; this.style.background='none';">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </form>
+                  <% } %>
+                </div>
+                <p class="text-muted mb-2" style="font-size: 0.9rem;">
+                  <i class="fas fa-calendar me-2"></i><%= notice.date %> - Published by admin
+                </p>
+              </div>
+            </div>
+            <div class="notice-content" style="color: #718096; line-height: 1.6;">
+              <%= notice.details %>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+
+    <% if(notices.length === 0){ %>
+      <div class="text-center py-5" data-aos="fade-up">
+        <div class="empty-state" style="max-width: 400px; margin: 0 auto;">
+          <div class="empty-icon mb-3" style="width: 100px; height: 100px; background: #1E3A8A; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            <i class="fas fa-bullhorn text-white" style="font-size: 3rem;"></i>
+          </div>
+          <h3 style="color: #2d3748; font-weight: 700;">No Notices Yet</h3>
+          <p class="text-muted">There are currently no notices. Check back later for updates!</p>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
